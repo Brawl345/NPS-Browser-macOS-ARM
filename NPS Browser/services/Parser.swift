@@ -13,6 +13,7 @@ class Parser {
     func parseTSV(data: String, itemType: ItemType) -> [TSVData] {
         var parsedData: [TSVData] = []
         var rows = data.split(separator: "\r\n")
+        guard !rows.isEmpty else { return parsedData }
         rows.remove(at: 0)
         
         for row in rows {

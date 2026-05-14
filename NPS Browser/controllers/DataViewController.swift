@@ -17,6 +17,7 @@ class DataViewController: NSViewController, ToolbarDelegate {
     lazy var windowDelegate: WindowDelegate = Helpers().getWindowDelegate()
 
     var notificationToken: NotificationToken?
+    private var requestedTypes: Set<String> = []
     
     private var realm: Realm = {
         return DBMigration.configureMigration()
@@ -31,6 +32,7 @@ class DataViewController: NSViewController, ToolbarDelegate {
         let reg = windowDelegate.getRegion()
 
         if (items?.isEmpty)! {
+            requestedTypes.insert("\(ct)_\(ft)")
             NetworkManager().makeRequest()
         } else {
             setArrayControllerContent(content: items?.filter(NSPredicate(format: "consoleType == %@ AND fileType == %@ AND region == %@ AND pkgDirectLink != 'MISSING'", ct, ft, reg)))
@@ -68,8 +70,10 @@ class DataViewController: NSViewController, ToolbarDelegate {
     func filterType(itemType: ItemType, region: String) {
         let p = NSPredicate(format: makePredicateString(), itemType.console.rawValue, itemType.fileType.rawValue, region)
         let objects = items!.filter(p)
-        
-        if objects.isEmpty {
+        let typeKey = "\(itemType.console.rawValue)_\(itemType.fileType.rawValue)"
+
+        if objects.isEmpty && !requestedTypes.contains(typeKey) {
+            requestedTypes.insert(typeKey)
             NetworkManager().makeRequest()
         }
         setArrayControllerContent(content: objects)

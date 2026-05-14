@@ -65,11 +65,17 @@ class DetailsViewController: NSViewController {
                     if let cpatcho: CompatPack = DBManager().fetch(CompatPack.self, predicate: NSPredicate(format: "titleId == %@ AND type == 'CompatPatch'", titleId!), sorted: nil).first {
                         let url = URL(string: (cpatcho.downloadUrl)!)
                         let item = Helpers().makeDLItem(data: obj, downloadUrl: url!, fileType: .CPatch)
-                        baseDLItem?.doNext = item
-                        item.parentItem = baseDLItem
+                        if baseDLItem == nil {
+                            baseDLItem = item
+                        } else {
+                            baseDLItem?.doNext = item
+                            item.parentItem = baseDLItem
+                        }
                     }
                     
-                    Helpers().getSharedAppDelegate().downloadManager.addToDownloadQueue(data: baseDLItem!)
+                    if let dlItem = baseDLItem {
+                        Helpers().getSharedAppDelegate().downloadManager.addToDownloadQueue(data: dlItem)
+                    }
                 default: break
                 }
             default: break
