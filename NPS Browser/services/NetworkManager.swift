@@ -188,7 +188,7 @@ class NetworkManager {
         task.standardError = errpipe
 
         task.launchPath = vitaupdatelinksPath
-        task.arguments = [titleId]
+        task.arguments = ["-t", titleId]
 
         task.launch()
 
