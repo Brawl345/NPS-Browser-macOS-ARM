@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.4.9
+### Added
+- Download panel opens automatically after a download is started
+
+### Changed
+- Ship [pkg2zip](https://github.com/Brawl345/pkg2zip) and [vitanpupdatelinks](https://github.com/Brawl345/vitanpupdatelinks) forks compiled for arm64
+
+### Fixed
+- Download and bookmarks panel work again
+- Extraction doesn't freeze the app anymore
+- Download ignores untrusted certificates such as Sony's
+- Does not freeze/loop/crash anymore when TSV files are unparsable or server is unreachable
+
 ## v1.4.8
 ### Added
 - Polish localization

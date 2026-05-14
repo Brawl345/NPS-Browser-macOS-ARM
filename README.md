@@ -1,7 +1,9 @@
 # NPS Browser for macOS on ARM.
 
 A Swift 5 implementation of NPS Browser.\
-**Tested and working on macOS 14.4**
+**Tested and working on macOS 14.7.7**
+
+Additionally, this fork fixes the download & bookmarks panels and ships native arm64 binaries for pkg2zip and vitanpupdatelinks.
 
 ![](/Screenshots/main.png?raw=true)
 
@@ -33,12 +35,12 @@ defaults delete JK3Y.NPS-Browser
 
 ## Thanks
 * Ann0ying for app icon
-* Luro02 for the [pkg2zip][] fork
-* devnoname120 for [vitanpupdatelinks][]
+* davidroman0O and mmozeiko for the pkg2zip PRs that I integrated [here](https://github.com/Brawl345/pkg2zip)
+* devnoname120 for [vitanpupdatelinks](https://github.com/devnoname120/vitanpupdatelinks)
 * L1cardo for Simplified Chinese translation
 * mavethee for Polish translation
 * danieltarazona for Swift 5 update and Carthage remove
 
-[Changelog]: https://github.com/JK3Y/NPS-Browser-macOS/blob/master/CHANGELOG.md
-[pkg2zip]: https://github.com/Luro02/pkg2zip
-[vitanpupdatelinks]: https://github.com/devnoname120/vitanpupdatelinks
+[Changelog]: https://github.com/Brawl345/NPS-Browser-macOS-ARM/blob/master/CHANGELOG.md
+[pkg2zip]: https://github.com/Brawl345/pkg2zip
+[vitanpupdatelinks]: https://github.com/Brawl345/vitanpupdatelinks
