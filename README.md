@@ -31,16 +31,13 @@ rm -r ~/Library/Caches/NPS\ Browser
 defaults delete JK3Y.NPS-Browser
 ```
 
-#### [Changelog][]
+#### [Changelog](https://github.com/Brawl345/NPS-Browser-macOS-ARM/blob/master/CHANGELOG.md)
 
 ## Thanks
 * Ann0ying for app icon
 * davidroman0O and mmozeiko for the pkg2zip PRs that I integrated [here](https://github.com/Brawl345/pkg2zip)
-* devnoname120 for [vitanpupdatelinks](https://github.com/devnoname120/vitanpupdatelinks)
+* devnoname120 for [vitanpupdatelinks](https://github.com/Brawl345/vitanpupdatelinks)
 * L1cardo for Simplified Chinese translation
 * mavethee for Polish translation
 * danieltarazona for Swift 5 update and Carthage remove
 
-[Changelog]: https://github.com/Brawl345/NPS-Browser-macOS-ARM/blob/master/CHANGELOG.md
-[pkg2zip]: https://github.com/Brawl345/pkg2zip
-[vitanpupdatelinks]: https://github.com/Brawl345/vitanpupdatelinks
