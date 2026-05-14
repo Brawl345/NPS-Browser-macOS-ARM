@@ -35,7 +35,6 @@
 		517FD71F2114B7FF00E56CB6 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517FD71E2114B7FF00E56CB6 /* Parser.swift */; };
 		517FD72121153BB700E56CB6 /* GameArtworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517FD72021153BB700E56CB6 /* GameArtworkViewController.swift */; };
 		517FD72321153C5100E56CB6 /* PSNStoreApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517FD72221153C5100E56CB6 /* PSNStoreApi.swift */; };
-		5BE2FA2370454E138B7AB39E /* SharedSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4912D119422E4B42943163C8 /* SharedSession.swift */; };
 		5181948E20DDB52C009282AB /* NSTableView+keydown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181948D20DDB52C009282AB /* NSTableView+keydown.swift */; };
 		5182C57F21140757003A5527 /* ItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5182C57E21140757003A5527 /* ItemType.swift */; };
 		51843FD120CB9DF2009AE9A4 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 51843FD020CB9DF2009AE9A4 /* .gitignore */; };
@@ -64,11 +63,13 @@
 		51EBE8212094E094005D44DC /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EBE8202094E094005D44DC /* DataViewController.swift */; };
 		51EBE8262094E095005D44DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE8252094E095005D44DC /* Assets.xcassets */; };
 		51EBE8292094E095005D44DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE8272094E095005D44DC /* Main.storyboard */; };
+		5BE2FA2370454E138B7AB39E /* SharedSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4912D119422E4B42943163C8 /* SharedSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4582257F2BAA1A94007F8CD3 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Main.xcstrings; sourceTree = "<group>"; };
 		45F7275E2BB6EC61006D1F5F /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		4912D119422E4B42943163C8 /* SharedSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSession.swift; sourceTree = "<group>"; };
 		5108B79D211641190065BA71 /* TSVData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSVData.swift; sourceTree = "<group>"; };
 		5121752E20A73EBC00772C86 /* NPS Browser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "NPS Browser.entitlements"; sourceTree = "<group>"; };
 		512175A720A7D28B00772C86 /* WindowDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDelegate.swift; sourceTree = "<group>"; };
@@ -86,7 +87,6 @@
 		517FD71E2114B7FF00E56CB6 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		517FD72021153BB700E56CB6 /* GameArtworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtworkViewController.swift; sourceTree = "<group>"; };
 		517FD72221153C5100E56CB6 /* PSNStoreApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSNStoreApi.swift; sourceTree = "<group>"; };
-		4912D119422E4B42943163C8 /* SharedSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSession.swift; sourceTree = "<group>"; };
 		5181948D20DDB52C009282AB /* NSTableView+keydown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTableView+keydown.swift"; sourceTree = "<group>"; };
 		5182C57E21140757003A5527 /* ItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemType.swift; sourceTree = "<group>"; };
 		51843FD020CB9DF2009AE9A4 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -594,7 +594,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 71;
+				CURRENT_PROJECT_VERSION = 72;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -610,7 +610,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.4.9;
 				OTHER_SWIFT_FLAGS = "$(inherited)\n$(inherited)\n$(inherited)\n \"-D\"\n \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = "JK3Y.NPS-Browser";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -633,7 +633,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 71;
+				CURRENT_PROJECT_VERSION = 72;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -649,7 +649,9 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.4.9;
+				ARCHS = arm64;
+				EXCLUDED_ARCHS = x86_64;
 				OTHER_SWIFT_FLAGS = "$(inherited)\n$(inherited)\n$(inherited)\n \"-D\"\n \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = "JK3Y.NPS-Browser";
 				PRODUCT_NAME = "$(TARGET_NAME)";
