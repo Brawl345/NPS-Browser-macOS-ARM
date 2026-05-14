@@ -17,9 +17,8 @@ class DownloadListItemCellView: NSTableCellView {
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        // Drawing code here.
         item = objectValue as? DLItem
-        
+        guard item != nil else { return }
         changeImage()
     }
     
@@ -34,11 +33,12 @@ class DownloadListItemCellView: NSTableCellView {
     }
     
     func changeImage() {
-        if (item?.isResumable)! {
+        guard let item = item else { return }
+        if item.isResumable {
             btnAction.image = #imageLiteral(resourceName: "Start")
-        } else if (item?.isStoppable)! {
+        } else if item.isStoppable {
             btnAction.image = #imageLiteral(resourceName: "Stop")
-        } else if (item?.isViewable)! {
+        } else if item.isViewable {
             btnAction.image = #imageLiteral(resourceName: "Reveal")
         }
     }

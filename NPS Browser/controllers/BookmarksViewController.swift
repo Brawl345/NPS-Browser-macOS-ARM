@@ -15,8 +15,13 @@ class BookmarksViewController: NSViewController {
     @IBOutlet var bookmarksArrayController: NSArrayController!
 
     override func viewDidLoad() {
-        updateView()
         super.viewDidLoad()
+        updateView()
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        updateView()
     }
     
     @IBAction func doRemoveBookmark(_ sender: NSButton) {
@@ -35,5 +40,9 @@ class BookmarksViewController: NSViewController {
     func updateView() {
         let content = DBManager().fetch(Bookmark.self)
         bookmarksArrayController.content = content
+        bookmarksArrayController.rearrangeObjects()
+        if !content.isEmpty {
+            bookmarksArrayController.setSelectionIndex(0)
+        }
     }
 }

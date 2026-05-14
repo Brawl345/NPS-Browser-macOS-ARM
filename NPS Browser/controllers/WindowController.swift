@@ -17,14 +17,26 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
     @IBOutlet weak var tbSearchBar: NSSearchField!
     var delegate: ToolbarDelegate?
     var loadingViewController: LoadingViewController?
+    private weak var downloadVC: DownloadViewController?
 
     override func windowDidLoad() {
-        // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
         super.windowDidLoad()
-      let vc: LoadingViewController = self.storyboard?.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("loadingVC")) as! LoadingViewController
+        let vc = self.storyboard?.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("loadingVC")) as! LoadingViewController
         loadingViewController = vc
-        
         self.delegate = getDataController()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(onDownloadStarted), name: .downloadStarted, object: nil)
+    }
+
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let vc = segue.destinationController as? DownloadViewController {
+            downloadVC = vc
+        }
+    }
+
+    @objc private func onDownloadStarted() {
+        guard downloadVC?.view.window == nil else { return }
+        performSegue(withIdentifier: "showDownloadsPanel", sender: self)
     }
     
     @IBAction func onTypeChanged(_ sender: Any) {

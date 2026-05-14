@@ -472,6 +472,7 @@
                                             </tableColumns>
                                             <connections>
                                                 <binding destination="rip-IA-Kaa" name="content" keyPath="arrangedObjects" id="egp-T6-dQo"/>
+                                                <binding destination="rip-IA-Kaa" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="egp-T6-dQo" id="egp-T6-dQp"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -496,6 +497,8 @@
                             </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="Mrp-rl-JTT" firstAttribute="top" secondItem="bSD-2u-Fol" secondAttribute="top" constant="5" id="3A1F71941DEF4884B67D661E"/>
+                            <constraint firstAttribute="trailing" secondItem="BgI-cm-35o" secondAttribute="trailing" id="E5203AF890ED432895532254"/>
                             <constraint firstItem="BgI-cm-35o" firstAttribute="top" secondItem="Mrp-rl-JTT" secondAttribute="bottom" constant="9" id="Khb-HM-cPJ"/>
                             <constraint firstItem="Mrp-rl-JTT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bSD-2u-Fol" secondAttribute="leading" symbolic="YES" id="LjM-gd-rwe"/>
                             <constraint firstAttribute="trailing" secondItem="Mrp-rl-JTT" secondAttribute="trailing" constant="155" id="VLO-4S-odz"/>
@@ -550,7 +553,7 @@
                                         </buttonCell>
                                     </button>
                                     <connections>
-                                        <segue destination="SOC-lv-SK1" kind="popover" popoverAnchorView="Jr5-TI-hKt" popoverBehavior="t" preferredEdge="maxY" id="eoW-8b-FEJ"/>
+                                        <segue destination="SOC-lv-SK1" kind="popover" popoverAnchorView="Jr5-TI-hKt" popoverBehavior="t" preferredEdge="maxY" identifier="showDownloadsPanel" id="eoW-8b-FEJ"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="7eI-JH-Pcd"/>
@@ -1247,7 +1250,7 @@
                                             <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn editable="NO" width="384" minWidth="40" maxWidth="1000" id="1wn-lR-1dd">
+                                                <tableColumn editable="NO" width="384" minWidth="40" maxWidth="1000" identifier="DLItemCell" id="1wn-lR-1dd">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1258,7 +1261,7 @@
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <prototypeCellViews>
-                                                        <tableCellView id="DaP-mC-AOO" customClass="DownloadListItemCellView" customModule="NPS_Browser" customModuleProvider="target">
+                                                        <tableCellView id="DaP-mC-AOO" customClass="DownloadListItemCellView" customModule="NPS_Browser" customModuleProvider="target" identifier="DLItemCell">
                                                             <rect key="frame" x="11" y="1" width="393" height="56"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -1401,6 +1404,7 @@
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="Tnb-uc-zsV" firstAttribute="top" secondItem="Qc3-hK-TXY" secondAttribute="top" constant="5" id="AE799D8C344144669F3CD5A9"/>
                             <constraint firstItem="0u4-nU-RL9" firstAttribute="baseline" secondItem="Tnb-uc-zsV" secondAttribute="firstBaseline" id="1Cb-bb-XGx"/>
                             <constraint firstItem="rCG-ed-yrt" firstAttribute="leading" secondItem="Qc3-hK-TXY" secondAttribute="leading" id="2v2-qv-LaE"/>
                             <constraint firstItem="rCG-ed-yrt" firstAttribute="top" secondItem="0u4-nU-RL9" secondAttribute="bottom" constant="8" symbolic="YES" id="870-nl-gCG"/>

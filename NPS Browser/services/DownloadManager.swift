@@ -65,6 +65,8 @@ class DownloadManager {
             
         // add object to downloadItems array
         downloadItems.insert(data, at: 0)
+        NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
+        NotificationCenter.default.post(name: .downloadStarted, object: nil)
         
         let downloadItemsIndex = downloadItems.firstIndex(of: data)!
         
@@ -151,6 +153,7 @@ class DownloadManager {
                 dlItem.makeStoppable()
                 dlItem.progress = (progress.fractionCompleted * 100).rounded()
                 dlItem.timeRemaining = progress.fractionCompleted
+                NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
                 }
                 .responseData { response in
                     response.result.ifSuccess {

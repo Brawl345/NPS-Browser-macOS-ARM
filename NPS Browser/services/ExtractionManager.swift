@@ -102,18 +102,17 @@ class ExtractionManager {
         
         task.terminationHandler = { task in
             DispatchQueue.main.async {
-                
                 let taskStatus = task.terminationStatus
-                
-                if (taskStatus == 0) {
+                if taskStatus == 0 {
                     debugPrint("Success!")
-                    
                     self.setStatus("Extraction Complete")
                     self.item.makeViewable()
                     Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
                 } else {
                     debugPrint("Task Failed")
                 }
+                self.cleanup()
+                NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
             }
         }
         
@@ -122,18 +121,14 @@ class ExtractionManager {
         } catch let error as NSError {
             debugPrint(error)
         }
-        
-        task.waitUntilExit()
-        
-        cleanup()
     }
     
     private func completeDownload(status: String) {
         setStatus(status)
         self.item.makeViewable()
         Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
-        
         downloadManager.moveToCompleted(item: self.item)
+        NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
         return
     }
     
