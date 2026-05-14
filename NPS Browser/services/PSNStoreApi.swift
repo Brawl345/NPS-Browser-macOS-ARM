@@ -43,7 +43,7 @@ class PSNStoreApi {
     func getImage() -> Promise<Image> {
         let url = getImageURL()
         return Promise<Image> {fulfill, reject in
-            Alamofire.request(url)
+            sharedSession.request(url)
                 .responseImage { response in
                     if response.result.isSuccess {
                         if let image = response.result.value {

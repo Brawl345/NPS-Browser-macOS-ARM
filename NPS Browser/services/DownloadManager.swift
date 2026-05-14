@@ -59,7 +59,7 @@ class DownloadManager {
         
         makeConsoleFolder(dlItem: data)
         
-        let request = Alamofire.download(data.downloadUrl!, to: destination)
+        let request = sharedSession.download(data.downloadUrl!, to: destination)
         data.request = request
         data.destination = destination
             
@@ -77,7 +77,7 @@ class DownloadManager {
     
     func resumeDownload(data: DLItem) {
       if let resumeData = data.resumeData {
-          let request = Alamofire.download(resumingWith: resumeData, to: data.destination)
+          let request = sharedSession.download(resumingWith: resumeData, to: data.destination)
 
           data.request = request
           let op = makeConcurrentOperation(dlItem: data, request: request)

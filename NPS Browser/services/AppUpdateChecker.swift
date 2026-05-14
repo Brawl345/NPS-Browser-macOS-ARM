@@ -15,7 +15,7 @@ class AppUpdateChecker {
     func fetchLatest(successHandler: @escaping ((_ tagName: String, _ browserDownloadURL: String) -> ()) ) {
         let url = "https://api.github.com/repos/JK3Y/NPS-Browser-macOS/releases/latest"
         
-        Alamofire.request(url)
+        sharedSession.request(url)
             .responseJSON { response in
                 
                 if response.result.isSuccess {
@@ -48,7 +48,7 @@ class AppUpdateChecker {
             return (url, [.removePreviousFile, .createIntermediateDirectories])
         }
         
-        Alamofire.download(url, to: destination)
+        sharedSession.download(url, to: destination)
             .downloadProgress { progress in
                 Helpers().getLoadingViewController().setLabel(text: "Downloading...")
                 Helpers().getLoadingViewController().setProgress(amount: progress.fractionCompleted * 100)

@@ -41,7 +41,7 @@ class NetworkManager {
             Helpers().getLoadingViewController().setLabel(text: "Requesting data... (step 1/5)")
             Helpers().getLoadingViewController().setProgress(amount: 20)
             
-            Alamofire.request(url)
+            sharedSession.request(url)
                 .downloadProgress { progress in
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
                     self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
@@ -139,7 +139,7 @@ class NetworkManager {
             Helpers().getLoadingViewController().setLabel(text: "Requesting Comp Packs... (step 1/5)")
             Helpers().getLoadingViewController().setProgress(amount: 20)
 
-            Alamofire.request(url)
+            sharedSession.request(url)
                 .downloadProgress { progress in
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
                     self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
@@ -221,7 +221,7 @@ class NetworkManager {
 
         return {
                 Promise<URL> { fulfill, reject in
-                Alamofire.request(url)
+                sharedSession.request(url)
                     .responseString { response in
                         
                         if let data = response.value {
