@@ -40,13 +40,9 @@ class PreferencesViewController: NSViewController {
     @IBOutlet weak var chkCompressPSPISO: NSButton!
     @IBOutlet weak var compressionFactorStepper: NSStepper!
     @IBOutlet weak var compressionFactorField: NSTextField!
-//    @IBOutlet weak var chkUnpackPS3Packages: NSButton!
-    
-    
-//    let settings = SettingsManager().getSettings()
+
     var dlLocation: URL?
     var xtLocation: URL?
-    var update_checked: Date? = nil
     
     override func viewWillAppear() {
         // Remove fullscreen and ability to resize the window

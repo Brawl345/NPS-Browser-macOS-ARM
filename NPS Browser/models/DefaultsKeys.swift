@@ -34,7 +34,6 @@ extension DefaultsKeys {
     static let xt_create_license              = DefaultsKey<Bool>("xt_create_license", defaultValue: true)
     static let xt_compress_psp_iso            = DefaultsKey<Bool>("xt_compress_psp_iso", defaultValue: false)
     static let xt_compression_factor          = DefaultsKey<Int>("xt_compression_factor", defaultValue: 1)
-    static let xt_unpack_ps3_packages         = DefaultsKey<Bool>("xt_unpack_ps3_packages", defaultValue: false)
     
     static let dsp_hide_invalid_url_items = DefaultsKey<Bool>("dsp_hide_invalid_url_items", defaultValue: true)
 }

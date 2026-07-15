@@ -48,7 +48,6 @@ class DLItem: NSObject, Codable {
     @objc dynamic var isRemovable       : Bool = false
     @objc dynamic var isResumable       : Bool = false
     @objc dynamic var cpackPath         : URL?
-    @objc dynamic var cpatchPath        : URL?
     @objc dynamic var doNext            : DLItem? = nil
     @objc dynamic var parentItem        : DLItem? = nil
     @objc dynamic var consoleType       : String?
@@ -71,7 +70,6 @@ class DLItem: NSObject, Codable {
         case isRemovable
         case isResumable
         case cpackPath
-        case cpatchPath
         case doNext
         case parentItem
         case consoleType

@@ -80,7 +80,6 @@ class DataViewController: NSViewController, ToolbarDelegate {
     }
     
     func filterString(itemType: ItemType, region: String, searchString: String) {
-//        let p = NSPredicate(format: "consoleType == %@ AND fileType == %@ AND region == %@ AND name contains[c] %@ AND pkgDirectLink != 'MISSING'", itemType.console.rawValue, itemType.fileType.rawValue, region, searchString)
         var p = makePredicateString()
         p.append(" AND name contains[c] %@")
         let q = NSPredicate(format: p, itemType.console.rawValue, itemType.fileType.rawValue, region, searchString)

@@ -11,7 +11,6 @@ import CryptoKit
 import Queuer
 import Alamofire
 import Promises
-//import Files
 import SwiftyUserDefaults
 
 class DownloadManager {

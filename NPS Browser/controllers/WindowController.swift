@@ -61,25 +61,6 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
         NetworkManager().makeRequest()
     }
 
-//    @IBAction func toggleArtworkSidebar(_ sender: NSMenuItem) {
-//        debugPrint(sender)
-//
-//        let sv = getDataController().getDetailsViewController().getBoxartViewController().parent as! NSSplitViewController
-//        let av = sv.splitViewItems.last!
-//
-//        if av.isCollapsed {
-//            av.isCollapsed = false
-//
-//            sender.title = "Hide Artwork"
-//        } else {
-//            av.isCollapsed = true
-//            sender.title = "Show Artwork"
-//        }
-//        // TODO: use nextResponder to pass toggleSidebar call to Artwork Controller
-////        Respon
-//    }
-    
-    
     func getDataController() -> DataViewController {
         let splitViewController = self.window!.contentViewController! as! NSSplitViewController
         let vc: DataViewController = splitViewController.splitViewItems[0].viewController as! DataViewController
@@ -91,7 +72,6 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
     }
 
     func getItemType() -> ItemType {
-//        return
         return ItemType.parseString((tbType.selectedItem?.title)!, ItemType.getTypeFromTag(tbType.selectedItem?.tag ?? 0))
     }
     
@@ -109,10 +89,8 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
         default:
             return "US"
         }
-        
-//        return region!
     }
-    
+
 }
 
 import Foundation
@@ -134,15 +112,5 @@ class SplitViewController: NSSplitViewController {
             }
         }
     }
-    
-}
 
-//class MenuItemController: NSMenuItem {
-//    func fds() {
-//        self.get
-//    }
-//    
-////    override func menuWillOpen(_ menu: NSMenu) {
-//////        menu.su
-////    }
-//}
+}

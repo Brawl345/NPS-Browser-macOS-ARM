@@ -9,12 +9,10 @@
 import Foundation
 import Cocoa
 import Zip
-//import Files
 import SwiftyUserDefaults
 
 class ExtractionManager {
     private var item: DLItem
-//    private let userSettings = SettingsManager().getSettings()
     private var downloadManager: DownloadManager
     private var isPS3: Bool = false
     
@@ -178,37 +176,7 @@ class ExtractionManager {
         
         return arguments
     }
-    
-//    private func unpackagePS3() {
-//        setStatus(DLStatus.extracting)
-//
-//        let pkgripPath = Bundle.main.resourcePath! + "/pkgrip"
-//        let task = Process()
-//        let pipe = Pipe()
-//
-//        task.currentDirectoryURL = userSettings?.download.download_location
-//        task.executableURL = URL(fileURLWithPath: pkgripPath)
-//        task.arguments = ["-s", (item.destinationURL?.path)!]
-//        task.standardOutput = pipe
-//        task.terminationHandler = { task in
-//            DispatchQueue.main.async {
-//                self.setStatus(DLStatus.extractionComplete)
-//                self.item.makeViewable()
-//                Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
-//            }
-//        }
-//
-//        do {
-//            try task.run()
-//        } catch let error as NSError {
-//            debugPrint(error)
-//        }
-//
-//        task.waitUntilExit()
-//
-//        cleanup()
-//    }
-    
+
     private func setStatus(_ status: String) {
         item.status = status
     }

@@ -24,7 +24,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         setupSwiftyBeaverLogging()
         migrateSourceURLsToHTTPS()
         setupNotifications()
-        // Helpers.setupDownloadsDirectory()
     }
 
     func setupNotifications() {
