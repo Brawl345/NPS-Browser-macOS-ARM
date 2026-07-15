@@ -9,15 +9,15 @@ import Foundation
 import SwiftyUserDefaults
 
 extension DefaultsKeys {
-    static let src_psv_games   = DefaultsKey<URL?>("src_psv_games", defaultValue: URL(string:"http://nopaystation.com/tsv/PSV_GAMES.tsv")!)
-    static let src_psv_dlcs    = DefaultsKey<URL?>("src_psv_dlcs", defaultValue: URL(string:"http://nopaystation.com/tsv/PSV_DLCS.tsv")!)
-    static let src_psv_themes  = DefaultsKey<URL?>("src_psv_themes", defaultValue: URL(string:"http://nopaystation.com/tsv/PSV_THEMES.tsv")!)
-    static let src_psp_games   = DefaultsKey<URL?>("src_psp_games", defaultValue: URL(string:"http://nopaystation.com/tsv/PSP_GAMES.tsv")!)
-    static let src_psx_games   = DefaultsKey<URL?>("src_psx_games", defaultValue: URL(string:"http://nopaystation.com/tsv/PSX_GAMES.tsv")!)
-    static let src_ps3_games   = DefaultsKey<URL?>("src_ps3_games", defaultValue: URL(string:"http://nopaystation.com/tsv/PS3_GAMES.tsv")!)
-    static let src_ps3_dlcs    = DefaultsKey<URL?>("src_ps3_dlcs", defaultValue: URL(string:"http://nopaystation.com/tsv/PS3_DLCS.tsv")!)
-    static let src_ps3_themes  = DefaultsKey<URL?>("src_ps3_themes", defaultValue: URL(string:"http://nopaystation.com/tsv/PS3_THEMES.tsv")!)
-    static let src_ps3_avatars = DefaultsKey<URL?>("src_ps3_avatars", defaultValue: URL(string:"http://nopaystation.com/tsv/PS3_AVATARS.tsv")!)
+    static let src_psv_games   = DefaultsKey<URL?>("src_psv_games", defaultValue: URL(string:"https://nopaystation.com/tsv/PSV_GAMES.tsv")!)
+    static let src_psv_dlcs    = DefaultsKey<URL?>("src_psv_dlcs", defaultValue: URL(string:"https://nopaystation.com/tsv/PSV_DLCS.tsv")!)
+    static let src_psv_themes  = DefaultsKey<URL?>("src_psv_themes", defaultValue: URL(string:"https://nopaystation.com/tsv/PSV_THEMES.tsv")!)
+    static let src_psp_games   = DefaultsKey<URL?>("src_psp_games", defaultValue: URL(string:"https://nopaystation.com/tsv/PSP_GAMES.tsv")!)
+    static let src_psx_games   = DefaultsKey<URL?>("src_psx_games", defaultValue: URL(string:"https://nopaystation.com/tsv/PSX_GAMES.tsv")!)
+    static let src_ps3_games   = DefaultsKey<URL?>("src_ps3_games", defaultValue: URL(string:"https://nopaystation.com/tsv/PS3_GAMES.tsv")!)
+    static let src_ps3_dlcs    = DefaultsKey<URL?>("src_ps3_dlcs", defaultValue: URL(string:"https://nopaystation.com/tsv/PS3_DLCS.tsv")!)
+    static let src_ps3_themes  = DefaultsKey<URL?>("src_ps3_themes", defaultValue: URL(string:"https://nopaystation.com/tsv/PS3_THEMES.tsv")!)
+    static let src_ps3_avatars = DefaultsKey<URL?>("src_ps3_avatars", defaultValue: URL(string:"https://nopaystation.com/tsv/PS3_AVATARS.tsv")!)
     static let src_compatPacks = DefaultsKey<URL?>("src_compatPacks", defaultValue: URL(string:"https://gitlab.com/nopaystation_repos/nps_compati_packs/raw/master/entries.txt")!)
     static let src_compatPatch = DefaultsKey<URL?>("src_compatPatch", defaultValue: URL(string:"https://gitlab.com/nopaystation_repos/nps_compati_packs/raw/master/entries_patch.txt")!)
     

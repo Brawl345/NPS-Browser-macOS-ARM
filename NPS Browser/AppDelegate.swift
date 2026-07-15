@@ -22,7 +22,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         setupSwiftyBeaverLogging()
+        migrateSourceURLsToHTTPS()
         // Helpers.setupDownloadsDirectory()
+    }
+
+    func migrateSourceURLsToHTTPS() {
+        let sourceKeys: [DefaultsKey<URL?>] = [
+            .src_psv_games, .src_psv_dlcs, .src_psv_themes,
+            .src_psp_games, .src_psx_games,
+            .src_ps3_games, .src_ps3_dlcs, .src_ps3_themes, .src_ps3_avatars,
+            .src_compatPacks, .src_compatPatch
+        ]
+
+        for key in sourceKeys {
+            guard let url = Defaults[key],
+                  url.scheme == "http",
+                  url.host == "nopaystation.com",
+                  var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+                continue
+            }
+            components.scheme = "https"
+            if let migrated = components.url {
+                Defaults[key] = migrated
+            }
+        }
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
