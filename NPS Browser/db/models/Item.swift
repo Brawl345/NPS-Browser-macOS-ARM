@@ -56,7 +56,7 @@ class Item: Object {
         self.init()
         self.titleId = tsvData.titleId
         self.region = tsvData.region
-        self.name = tsvData.name!
+        self.name = tsvData.name
         self.pkgDirectLink = tsvData.pkgDirectLink
         self.lastModificationDate = tsvData.lastModificationDate
         self.fileSize.value = tsvData.fileSize
@@ -71,7 +71,7 @@ class Item: Object {
         self.rap = tsvData.rap
         self.downloadRapFile = tsvData.downloadRapFile
         
-        self.pk = "\(region!)\(fileType!)\(titleId!)\(contentId!)"
+        self.pk = "\(region ?? "")\(fileType ?? "")\(titleId ?? "")\(contentId ?? "")"
     }
     
     static public func asObject(fromObject: Item) -> Item {
