@@ -42,26 +42,28 @@ class NetworkManager {
             }
         }
 
-        let storage = try! RealmStorageContext()
         let ft:FileType = self.windowDelegate.getItemType().fileType
         let ct:ConsoleType = self.windowDelegate.getItemType().console
-        
+        let workQueue = DispatchQueue.global(qos: .userInitiated)
+
         Promise<[TSVData]> { fulfill, reject in
             Helpers().showLoadingViewController()
             Helpers().getLoadingViewController().setLabel(text: "Requesting data... (step 1/5)")
             Helpers().getLoadingViewController().setProgress(amount: 20)
-            
+
             sharedSession.request(url)
                 .downloadProgress { progress in
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
                     self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
                 }
-                
-                .responseString { response in
+
+                .responseString(queue: workQueue) { response in
                     switch response.result {
                     case .success(let text):
-                        self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                        self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                        DispatchQueue.main.async {
+                            self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
+                            self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                        }
                         let parsedTSV = Parser().parseTSV(data: text, itemType: self.itemType)
                         fulfill(parsedTSV)
                     case .failure(let error):
@@ -69,24 +71,25 @@ class NetworkManager {
                     }
             }
         }
-            .then { _ in
-                self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
+            .then(on: workQueue) { (_: [TSVData]) in
+                DispatchQueue.main.async {
+                    self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
+                }
 
-                do {
-                    try storage.deleteAll(Item.self, predicate: NSPredicate(format: "fileType == %@ AND consoleType == %@", ft.rawValue, ct.rawValue))
-                }
+                let storage = try RealmStorageContext()
+                try storage.deleteAll(Item.self, predicate: NSPredicate(format: "fileType == %@ AND consoleType == %@", ft.rawValue, ct.rawValue))
         }
-            .then { result in
-                self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
-                
-                do {
-                    let objs = result.map { item in
-                        return Item(tsvData: item)
-                    }
-                    DBManager().storeBulk(objArray: objs)
+            .then(on: workQueue) { (result: [TSVData]) in
+                DispatchQueue.main.async {
+                    self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
                 }
+
+                let objs = result.map { item in
+                    return Item(tsvData: item)
+                }
+                DBManager().storeBulk(objArray: objs)
         }
             .then { _ in
                 Helpers().getLoadingViewController().closeWindow()
@@ -140,12 +143,11 @@ class NetworkManager {
             return Promise(nil)
         }
         
-        let storage = try! RealmStorageContext()
-        
         var typeName: String = "CompatPack"
         if isPatch {
             typeName = "CompatPatch"
         }
+        let workQueue = DispatchQueue.global(qos: .userInitiated)
         return Promise<[CompatPack]?> { fulfill, reject in
             
           if (self.windowDelegate.getLoadingViewController().presentingViewController != nil) {
@@ -159,11 +161,13 @@ class NetworkManager {
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
                     self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
                 }
-                .responseString { response in
+                .responseString(queue: workQueue) { response in
                     switch response.result {
                     case .success(let text):
-                        self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                        self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                        DispatchQueue.main.async {
+                            self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
+                            self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                        }
                         let parsed = Parser().parseCompatPackEntries(data: text, isPatch: isPatch, typeName: typeName)
                         fulfill(parsed)
                     case .failure(let error):
@@ -171,18 +175,23 @@ class NetworkManager {
                     }
                 }
             }
-            .then { result in
-                self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
-
-                do {
-                    try storage.deleteAll(CompatPack.self, predicate: NSPredicate(format: "type == %@", typeName))
+            .then(on: workQueue) { (_: [CompatPack]?) in
+                DispatchQueue.main.async {
+                    self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
                 }
+
+                let storage = try RealmStorageContext()
+                try storage.deleteAll(CompatPack.self, predicate: NSPredicate(format: "type == %@", typeName))
             }
-            .then { result in
-                self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
-                DBManager().storeBulk(objArray: result!)
+            .then(on: workQueue) { (result: [CompatPack]?) in
+                DispatchQueue.main.async {
+                    self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                }
+                if let result = result {
+                    DBManager().storeBulk(objArray: result)
+                }
             }
             .then { _ in
                 Helpers().getLoadingViewController().closeWindow()
