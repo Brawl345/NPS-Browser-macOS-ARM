@@ -17,7 +17,6 @@
 		4F46EFF42B7060950059E4AE /* Queuer in Frameworks */ = {isa = PBXBuildFile; productRef = 4F46EFF32B7060950059E4AE /* Queuer */; };
 		4F46EFF72B7060FF0059E4AE /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = 4F46EFF62B7060FF0059E4AE /* SwiftyBeaver */; };
 		4F46EFFA2B7061300059E4AE /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 4F46EFF92B7061300059E4AE /* Zip */; };
-		4F46EFFD2B7062050059E4AE /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 4F46EFFC2B7062050059E4AE /* Realm */; };
 		4F46EFFF2B7062050059E4AE /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4F46EFFE2B7062050059E4AE /* RealmSwift */; };
 		5108B79E211641190065BA71 /* TSVData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108B79D211641190065BA71 /* TSVData.swift */; };
 		512175A820A7D28B00772C86 /* WindowDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512175A720A7D28B00772C86 /* WindowDelegate.swift */; };
@@ -134,7 +133,6 @@
 				4F46EFEF2B7060680059E4AE /* Promises in Frameworks */,
 				4F46EFE82B70600E0059E4AE /* Fuzi in Frameworks */,
 				4F46EFF12B7060680059E4AE /* PromisesTestHelpers in Frameworks */,
-				4F46EFFD2B7062050059E4AE /* Realm in Frameworks */,
 				4F46EFEB2B7060680059E4AE /* FBLPromises in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,7 +310,6 @@
 				4F46EFF32B7060950059E4AE /* Queuer */,
 				4F46EFF62B7060FF0059E4AE /* SwiftyBeaver */,
 				4F46EFF92B7061300059E4AE /* Zip */,
-				4F46EFFC2B7062050059E4AE /* Realm */,
 				4F46EFFE2B7062050059E4AE /* RealmSwift */,
 			);
 			productName = "NPS Browser";
@@ -811,11 +808,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4F46EFF82B7061300059E4AE /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
-		};
-		4F46EFFC2B7062050059E4AE /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4F46EFFB2B7062050059E4AE /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
 		};
 		4F46EFFE2B7062050059E4AE /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
