@@ -15,15 +15,26 @@ import UserNotifications
 let log = SwiftyBeaver.self
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
-    
+class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+
     lazy var downloadManager: DownloadManager = DownloadManager()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         setupSwiftyBeaverLogging()
         migrateSourceURLsToHTTPS()
+        setupNotifications()
         // Helpers.setupDownloadsDirectory()
+    }
+
+    func setupNotifications() {
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if let error = error {
+                log.error("Notification authorization failed: \(error)")
+            }
+        }
     }
 
     func migrateSourceURLsToHTTPS() {
@@ -73,10 +84,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
       content.subtitle = subtitle
       content.sound = UNNotificationSound.default
 
-      let request = UNNotificationRequest(identifier: "myNotification", content: content, trigger: nil) // You can also use UNTimeIntervalNotificationTrigger for timed notifications
+      let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
       UNUserNotificationCenter.current().add(request) { (error) in
         if let error = error {
-          print("Error showing notification: \(error)")
+          log.error("Error showing notification: \(error)")
         }
       }
     }
