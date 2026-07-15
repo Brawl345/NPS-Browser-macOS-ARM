@@ -13,21 +13,24 @@ import SwiftyUserDefaults
 class Helpers {
 
     static func setupDownloadsDirectory() {
-        var dlFolder: URL? = Defaults[.dl_library_location]
-
-        //        if (try! !dlFolder.checkResourceIsReachable()) {
-        //            dlFolder =
-        //            try! Defaults[.dl_library_location] = dlFolder
-        //        }
-
+        let fileManager = FileManager.default
+        let fallback = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
         let dlDirName = "NPS Downloads"
+        let base = Defaults[.dl_library_location] ?? fallback
 
         do {
-            try Folder(path: dlFolder!.path).createSubfolderIfNeeded(withName: dlDirName)
+            try fileManager.createDirectory(at: base.appendingPathComponent(dlDirName, isDirectory: true),
+                                            withIntermediateDirectories: true)
         } catch {
-            dlFolder = try! NSHomeDirectory().asURL().appendingPathComponent("Downloads")
-            Defaults.set(dlFolder!.absoluteURL, forKey: "dl_library_location")
-            try! Folder(path: dlFolder!.path).createSubfolderIfNeeded(withName: dlDirName)
+            log.error("Could not create downloads directory at \(base.path): \(error)")
+            Defaults[.dl_library_location] = fallback
+
+            do {
+                try fileManager.createDirectory(at: fallback.appendingPathComponent(dlDirName, isDirectory: true),
+                                                withIntermediateDirectories: true)
+            } catch {
+                log.error("Could not create fallback downloads directory: \(error)")
+            }
         }
     }
 

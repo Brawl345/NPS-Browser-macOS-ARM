@@ -46,14 +46,16 @@ class DownloadManager {
     }
     
     func makeConsoleFolder(dlItem: DLItem) {
-        let filepath = Defaults[.dl_library_folder]!
-        let console = dlItem.consoleType
+        guard let console = dlItem.consoleType else { return }
 
-        if (try? Folder(path: filepath.path).createSubfolderIfNeeded(withName: console!)) != nil {
-            return
-        } else {
-            Helpers.setupDownloadsDirectory()
-            makeConsoleFolder(dlItem: dlItem)
+        let base = Defaults[.dl_library_folder]
+            ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
+        let target = base.appendingPathComponent(console, isDirectory: true)
+
+        do {
+            try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+        } catch {
+            log.error("Could not create console folder at \(target.path): \(error)")
         }
     }
     
