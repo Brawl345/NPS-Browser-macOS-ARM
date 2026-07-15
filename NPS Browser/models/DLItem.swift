@@ -22,6 +22,7 @@ class DLItem: NSObject, Codable {
     @objc dynamic var downloadUrl     : URL?
     @objc dynamic var progress          : Double = 0.0
     @objc dynamic var zrif              : String?
+    @objc dynamic var sha256            : String?
     @objc dynamic var status            : String?
     @objc dynamic var timeRemaining     : TimeInterval = 0
     var request                         : Alamofire.Request?
@@ -46,6 +47,7 @@ class DLItem: NSObject, Codable {
         case downloadUrl
         case progress
         case zrif
+        case sha256
         case status
         case timeRemaining
         case resumeData

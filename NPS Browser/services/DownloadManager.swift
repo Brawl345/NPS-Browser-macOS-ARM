@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CryptoKit
 import Queuer
 import Alamofire
 import Promises
@@ -144,6 +145,63 @@ class DownloadManager {
         }
     }
 
+    private func verifyChecksum(dlItem: DLItem) {
+        guard let expected = dlItem.sha256?.lowercased(),
+              expected.count == 64,
+              expected.allSatisfy({ $0.isHexDigit }),
+              let fileURL = dlItem.destinationURL else {
+            proceedAfterDownload(dlItem: dlItem)
+            return
+        }
+
+        dlItem.status = "Verifying..."
+        NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
+
+        DispatchQueue.global(qos: .utility).async {
+            let actual = DownloadManager.sha256OfFile(at: fileURL)
+            DispatchQueue.main.async {
+                if actual == expected {
+                    self.proceedAfterDownload(dlItem: dlItem)
+                } else {
+                    dlItem.status = "Failed! Checksum mismatch"
+                    log.error("SHA256 mismatch for \(dlItem.name ?? "unknown"): expected \(expected), got \(actual ?? "unreadable file")")
+                    dlItem.makeRemovable()
+                    NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
+                }
+            }
+        }
+    }
+
+    private func proceedAfterDownload(dlItem: DLItem) {
+        if (dlItem.isMore()) {
+            dlItem.doNext?.cpackPath = dlItem.destinationURL
+            dlItem.status = "Waiting..."
+
+            self.addToDownloadQueue(data: dlItem.doNext!)
+        } else {
+            ExtractionManager(item: dlItem, downloadManager: self).start()
+        }
+    }
+
+    private static func sha256OfFile(at url: URL) -> String? {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+        defer { handle.closeFile() }
+
+        var hasher = SHA256()
+        var done = false
+        while !done {
+            autoreleasepool {
+                let chunk = handle.readData(ofLength: 4 * 1024 * 1024)
+                if chunk.isEmpty {
+                    done = true
+                } else {
+                    hasher.update(data: chunk)
+                }
+            }
+        }
+        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+
     func makeConcurrentOperation(dlItem: DLItem, request: DownloadRequest) -> ConcurrentOperation {
         return ConcurrentOperation { _ in
             dlItem.status = "Queued..."
@@ -158,14 +216,7 @@ class DownloadManager {
                 .responseData { response in
                     response.result.ifSuccess {
                         dlItem.destinationURL = response.destinationURL
-                        if (dlItem.isMore()) {
-                            dlItem.doNext?.cpackPath = dlItem.destinationURL
-                            dlItem.status = "Waiting..."
-
-                            self.addToDownloadQueue(data: dlItem.doNext!)
-                        } else {
-                            ExtractionManager(item: dlItem, downloadManager: self).start()
-                        }
+                        self.verifyChecksum(dlItem: dlItem)
                     }
                     response.result.ifFailure {
                         guard let resumeData = response.resumeData else {

@@ -84,6 +84,9 @@ class Helpers {
         obj.name            = "\(fileType.rawValue) - \(data.name!)"
         obj.downloadUrl   = downloadUrl
         obj.zrif = data.zrif
+        if fileType == .Game {
+            obj.sha256 = data.sha256
+        }
         obj.consoleType = data.consoleType
         obj.fileType = fileType.rawValue
 
