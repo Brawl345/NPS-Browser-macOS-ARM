@@ -26,7 +26,7 @@ class LoadingViewController: NSViewController, LoadingViewDelegate {
     }
     
     func setProgress(amount: Double) {
-        self.progressIndicator.increment(by: amount)
+        self.progressIndicator.doubleValue = amount
     }
     
     func closeWindow() {

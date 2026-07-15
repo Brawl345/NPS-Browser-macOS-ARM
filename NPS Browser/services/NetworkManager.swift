@@ -49,12 +49,12 @@ class NetworkManager {
         Promise<[TSVData]> { fulfill, reject in
             Helpers().showLoadingViewController()
             Helpers().getLoadingViewController().setLabel(text: "Requesting data... (step 1/5)")
-            Helpers().getLoadingViewController().setProgress(amount: 20)
+            Helpers().getLoadingViewController().setProgress(amount: 10)
 
             sharedSession.request(url)
                 .downloadProgress { progress in
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 10 + progress.fractionCompleted * 40)
                 }
 
                 .responseString(queue: workQueue) { response in
@@ -62,7 +62,7 @@ class NetworkManager {
                     case .success(let text):
                         DispatchQueue.main.async {
                             self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                            self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                            self.windowDelegate.getLoadingViewController().setProgress(amount: 60)
                         }
                         let parsedTSV = Parser().parseTSV(data: text, itemType: self.itemType)
                         fulfill(parsedTSV)
@@ -74,7 +74,7 @@ class NetworkManager {
             .then(on: workQueue) { (_: [TSVData]) in
                 DispatchQueue.main.async {
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 75)
                 }
 
                 let storage = try RealmStorageContext()
@@ -83,7 +83,7 @@ class NetworkManager {
             .then(on: workQueue) { (result: [TSVData]) in
                 DispatchQueue.main.async {
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 90)
                 }
 
                 let objs = result.map { item in
@@ -154,19 +154,19 @@ class NetworkManager {
                 Helpers().showLoadingViewController()
             }
             Helpers().getLoadingViewController().setLabel(text: "Requesting Comp Packs... (step 1/5)")
-            Helpers().getLoadingViewController().setProgress(amount: 20)
+            Helpers().getLoadingViewController().setProgress(amount: 10)
 
             sharedSession.request(url)
                 .downloadProgress { progress in
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 10 + progress.fractionCompleted * 40)
                 }
                 .responseString(queue: workQueue) { response in
                     switch response.result {
                     case .success(let text):
                         DispatchQueue.main.async {
                             self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                            self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                            self.windowDelegate.getLoadingViewController().setProgress(amount: 60)
                         }
                         let parsed = Parser().parseCompatPackEntries(data: text, isPatch: isPatch, typeName: typeName)
                         fulfill(parsed)
@@ -178,7 +178,7 @@ class NetworkManager {
             .then(on: workQueue) { (_: [CompatPack]?) in
                 DispatchQueue.main.async {
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 50)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 75)
                 }
 
                 let storage = try RealmStorageContext()
@@ -187,7 +187,7 @@ class NetworkManager {
             .then(on: workQueue) { (result: [CompatPack]?) in
                 DispatchQueue.main.async {
                     self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
+                    self.windowDelegate.getLoadingViewController().setProgress(amount: 90)
                 }
                 if let result = result {
                     DBManager().storeBulk(objArray: result)
