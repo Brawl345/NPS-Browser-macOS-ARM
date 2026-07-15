@@ -106,11 +106,11 @@ class DownloadManager {
     func stopAndStoreDownloadList() {
         for item in downloadItems {
             
-            if (item.status == "Download Complete" || item.status == "Extraction Complete" || item.status == "Missing zRIF, license not created") {
+            if (item.status == DLStatus.downloadComplete || item.status == DLStatus.extractionComplete || item.status == DLStatus.missingZrif) {
                 item.makeViewable()
             } else {
                 item.request?.cancel()
-                item.status = "Stopped"
+                item.status = DLStatus.stopped
                 item.makeResumable()
             }
         }
@@ -152,7 +152,7 @@ class DownloadManager {
             return
         }
 
-        dlItem.status = "Verifying..."
+        dlItem.status = DLStatus.verifying
         NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
 
         DispatchQueue.global(qos: .utility).async {
@@ -161,7 +161,7 @@ class DownloadManager {
                 if actual == expected {
                     self.proceedAfterDownload(dlItem: dlItem)
                 } else {
-                    dlItem.status = "Failed! Checksum mismatch"
+                    dlItem.status = DLStatus.checksumMismatch
                     log.error("SHA256 mismatch for \(dlItem.name ?? "unknown"): expected \(expected), got \(actual ?? "unreadable file")")
                     dlItem.makeRemovable()
                     NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
@@ -173,7 +173,7 @@ class DownloadManager {
     private func proceedAfterDownload(dlItem: DLItem) {
         if (dlItem.isMore()) {
             dlItem.doNext?.cpackPath = dlItem.destinationURL
-            dlItem.status = "Waiting..."
+            dlItem.status = DLStatus.waiting
 
             self.addToDownloadQueue(data: dlItem.doNext!)
         } else {
@@ -202,10 +202,10 @@ class DownloadManager {
 
     func makeConcurrentOperation(dlItem: DLItem, request: DownloadRequest) -> ConcurrentOperation {
         return ConcurrentOperation { _ in
-            dlItem.status = "Queued..."
+            dlItem.status = DLStatus.queued
             
             request.downloadProgress { progress in
-                dlItem.status = "Downloading..."
+                dlItem.status = DLStatus.downloading
                 dlItem.makeStoppable()
                 dlItem.progress = (progress.fractionCompleted * 100).rounded()
                 dlItem.timeRemaining = progress.fractionCompleted
@@ -226,7 +226,7 @@ class DownloadManager {
                             dlItem.makeRemovable()
                             return
                         }
-                        dlItem.status = "Stopped"
+                        dlItem.status = DLStatus.stopped
                         dlItem.resumeData = resumeData
                         dlItem.makeResumable()
                     }

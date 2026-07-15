@@ -9,6 +9,20 @@
 import AppKit
 import Alamofire
 
+enum DLStatus {
+    static let queued               = "Queued..."
+    static let downloading          = "Downloading..."
+    static let waiting              = "Waiting..."
+    static let stopped              = "Stopped"
+    static let verifying            = "Verifying..."
+    static let extracting           = "Extracting..."
+    static let downloadComplete     = "Download Complete"
+    static let extractionComplete   = "Extraction Complete"
+    static let extractionFailed     = "Extraction failed"
+    static let missingZrif          = "Missing zRIF, license not created"
+    static let checksumMismatch     = "Failed! Checksum mismatch"
+}
+
 struct DownloadList: Codable {
     var items: [DLItem]
     init(items: [DLItem]) {

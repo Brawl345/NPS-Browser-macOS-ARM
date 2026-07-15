@@ -31,7 +31,7 @@ class ExtractionManager {
     
     func start() {
         if (!shouldDoExtract()) {
-            completeDownload(status: "Download Complete")
+            completeDownload(status: DLStatus.downloadComplete)
             return
         }
         
@@ -57,7 +57,7 @@ class ExtractionManager {
         if (item.fileType == "CPack") {
             do {
                 try Zip.unzipFile(item.destinationURL!, destination: filepath!, overwrite: true, password: nil)
-                completeDownload(status: "Extraction Complete")
+                completeDownload(status: DLStatus.extractionComplete)
             }
             catch {
                 log.warning("pack not unzipped")
@@ -68,12 +68,12 @@ class ExtractionManager {
             do {
                 if (item.cpackPath != nil) {
                     try Zip.unzipFile(item.cpackPath!, destination: filepath!, overwrite: true, password: nil)
-                    item.parentItem?.status = "Extraction Complete"
+                    item.parentItem?.status = DLStatus.extractionComplete
                     item.parentItem?.makeViewable()
                     Helpers().makeNotification(title: (item.parentItem?.name!)!, subtitle: (item.parentItem?.status!)!)
                 }
                 try Zip.unzipFile(item.destinationURL!, destination: filepath!, overwrite: true, password: nil)
-                completeDownload(status: "Extraction Complete")
+                completeDownload(status: DLStatus.extractionComplete)
             }
             catch {
                 log.warning("patch not unzipped")
@@ -83,17 +83,17 @@ class ExtractionManager {
     
     func usePkg2Zip() {
         if (item.zrif == "MISSING") {
-            completeDownload(status: "Missing zRIF, license not created")
+            completeDownload(status: DLStatus.missingZrif)
             return
         }
         
-        setStatus("Extracting...")
+        setStatus(DLStatus.extracting)
 
         guard let pkg2zipPath = Bundle.main.path(forResource: "pkg2zip", ofType: nil),
               let consoleType = item.consoleType,
               let workingDirectory = Defaults[.xt_library_folder]?.appendingPathComponent(consoleType) else {
             log.error("pkg2zip not found or extraction folder not configured")
-            completeDownload(status: "Extraction failed")
+            completeDownload(status: DLStatus.extractionFailed)
             return
         }
 
@@ -112,7 +112,7 @@ class ExtractionManager {
                 let taskStatus = task.terminationStatus
                 if taskStatus == 0 {
                     debugPrint("Success!")
-                    self.setStatus("Extraction Complete")
+                    self.setStatus(DLStatus.extractionComplete)
                     self.item.makeViewable()
                     Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
                 } else {
@@ -127,7 +127,7 @@ class ExtractionManager {
             try task.run()
         } catch let error as NSError {
             log.error("Could not run pkg2zip: \(error)")
-            completeDownload(status: "Extraction failed")
+            completeDownload(status: DLStatus.extractionFailed)
         }
     }
     
@@ -180,7 +180,7 @@ class ExtractionManager {
     }
     
 //    private func unpackagePS3() {
-//        setStatus("Extracting...")
+//        setStatus(DLStatus.extracting)
 //
 //        let pkgripPath = Bundle.main.resourcePath! + "/pkgrip"
 //        let task = Process()
@@ -192,7 +192,7 @@ class ExtractionManager {
 //        task.standardOutput = pipe
 //        task.terminationHandler = { task in
 //            DispatchQueue.main.async {
-//                self.setStatus("Extraction Complete")
+//                self.setStatus(DLStatus.extractionComplete)
 //                self.item.makeViewable()
 //                Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
 //            }
