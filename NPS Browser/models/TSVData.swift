@@ -91,13 +91,14 @@ struct TSVData {
         }
     }
 
-    func parseDate(dateString: String?) -> Date? {
-        guard let dateString = dateString else { return nil }
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        guard let date = formatter.date(from: dateString) else {
-            return nil
-        }
-        return date
+        return formatter
+    }()
+
+    func parseDate(dateString: String?) -> Date? {
+        guard let dateString = dateString else { return nil }
+        return TSVData.dateFormatter.date(from: dateString)
     }
 }
