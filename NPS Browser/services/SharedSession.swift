@@ -6,9 +6,14 @@
 import Foundation
 import Alamofire
 
-private class TrustAllPolicyManager: ServerTrustPolicyManager {
+// Sony ships an incomplete certificate chain on *.playstation.net,
+// so evaluation is disabled for those hosts only.
+private class PlayStationTrustPolicyManager: ServerTrustPolicyManager {
     override func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
-        return .disableEvaluation
+        if host == "playstation.net" || host.hasSuffix(".playstation.net") {
+            return .disableEvaluation
+        }
+        return .performDefaultEvaluation(validateHost: true)
     }
 }
 
@@ -16,6 +21,6 @@ let sharedSession: SessionManager = {
     let configuration = URLSessionConfiguration.default
     return SessionManager(
         configuration: configuration,
-        serverTrustPolicyManager: TrustAllPolicyManager(policies: [:])
+        serverTrustPolicyManager: PlayStationTrustPolicyManager(policies: [:])
     )
 }()
