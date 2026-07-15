@@ -26,33 +26,44 @@ public enum ConfigurationType {
     }
 }
 
+enum StorageError: LocalizedError {
+    case realmUnavailable
+    case missingIdentifier
+
+    var errorDescription: String? {
+        switch self {
+        case .realmUnavailable: return "The database is not available."
+        case .missingIdentifier: return "An in-memory database requires an identifier."
+        }
+    }
+}
+
 class RealmStorageContext: StorageContext {
     var realm: Realm?
-    
+
     required init(configuration: ConfigurationType = .basic(url: nil)) throws {
         var rmConfig = Realm.Configuration()
-        rmConfig.readOnly = true
-        
+
         switch configuration {
         case .basic:
             rmConfig = Realm.Configuration.defaultConfiguration
             if let url = configuration.associated {
-                rmConfig.fileURL = URL(string: url)
+                rmConfig.fileURL = URL(fileURLWithPath: url)
             }
         case .inMemory:
             rmConfig = Realm.Configuration()
             if let identifier = configuration.associated {
                 rmConfig.inMemoryIdentifier = identifier
             } else {
-                throw NSError()
+                throw StorageError.missingIdentifier
             }
         }
         try self.realm = Realm(configuration: rmConfig)
     }
-    
+
     public func safeWrite(_ block: (() throws -> Void)) throws {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         if realm.isInWriteTransaction {
@@ -67,7 +78,7 @@ class RealmStorageContext: StorageContext {
 extension RealmStorageContext {
     func create<T>(_ model: T.Type, completion: @escaping ((T) -> Void)) throws where T : Storable {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         try self.safeWrite {
@@ -78,7 +89,7 @@ extension RealmStorageContext {
     
     func save(object: Storable) throws {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         try self.safeWrite {
@@ -96,7 +107,7 @@ extension RealmStorageContext {
 extension RealmStorageContext {
     func delete(object: Storable) throws {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         try self.safeWrite {
@@ -106,7 +117,7 @@ extension RealmStorageContext {
     
     func deleteAll<T: Storable>(_ model: T.Type) throws {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         try self.safeWrite {
@@ -119,21 +130,24 @@ extension RealmStorageContext {
     
     func deleteAll<T>(_ model: T.Type, predicate: NSPredicate? = nil) throws where T : Storable {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
+        var toDelete: [Object] = []
         fetch(model, predicate: predicate) { (objects) in
-            try! self.safeWrite {
-                for object in objects {
-                    realm.delete(object as! Object)
-                }
+            toDelete = objects.compactMap { $0 as? Object }
+        }
+
+        try self.safeWrite {
+            for object in toDelete {
+                realm.delete(object)
             }
         }
     }
     
     func reset() throws {
         guard let realm = self.realm else {
-            throw NSError()
+            throw StorageError.realmUnavailable
         }
         
         try self.safeWrite {
