@@ -39,20 +39,30 @@ class DetailsViewController: NSViewController {
             self.sendDLData(url: url!, fileType: .Game)
         }
         if (chkDLUpdate.state == .on && chkDLUpdate.isEnabled && chkDLUpdate.isHidden == false) {
-            if let url = NetworkManager().getUpdateXMLURLFromHMAC(titleId: getROManagedObject().titleId!) {
-                let pxml = NetworkManager().fetchUpdateXML(url: url)
-                pxml().then { res in
-                    self.sendDLData(url: res, fileType: .Update)
-                }.catch { error in
-                    log.error(error)
-                    Helpers().makeAlert(messageText: "Update not available",
-                                        informativeText: error.localizedDescription,
-                                        alertStyle: .warning)
+            let networkManager = NetworkManager()
+            let titleId = getROManagedObject().titleId!
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                let url = networkManager.getUpdateXMLURLFromHMAC(titleId: titleId)
+
+                DispatchQueue.main.async {
+                    guard let url = url else {
+                        Helpers().makeAlert(messageText: "Update not available",
+                                            informativeText: "The update link could not be determined.",
+                                            alertStyle: .warning)
+                        return
+                    }
+
+                    let pxml = networkManager.fetchUpdateXML(url: url)
+                    pxml().then { res in
+                        self.sendDLData(url: res, fileType: .Update)
+                    }.catch { error in
+                        log.error(error)
+                        Helpers().makeAlert(messageText: "Update not available",
+                                            informativeText: error.localizedDescription,
+                                            alertStyle: .warning)
+                    }
                 }
-            } else {
-                Helpers().makeAlert(messageText: "Update not available",
-                                    informativeText: "The update link could not be determined.",
-                                    alertStyle: .warning)
             }
         }
         if (chkDLCompatPack.state == .on && chkDLCompatPack.isEnabled && chkDLCompatPack.isHidden == false) {
