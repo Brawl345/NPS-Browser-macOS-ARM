@@ -209,17 +209,26 @@ class NetworkManager {
         var output: [String] = []
         var error: [String] = []
 
-        let vitaupdatelinksPath = Bundle.main.path(forResource: "vitaupdatelinks", ofType: nil)
+        guard let vitaupdatelinksPath = Bundle.main.path(forResource: "vitaupdatelinks", ofType: nil) else {
+            log.error("vitaupdatelinks binary not found in bundle")
+            return nil
+        }
+
         let task = Process()
         let outpipe = Pipe()
         task.standardOutput = outpipe
         let errpipe = Pipe()
         task.standardError = errpipe
 
-        task.launchPath = vitaupdatelinksPath
+        task.executableURL = URL(fileURLWithPath: vitaupdatelinksPath)
         task.arguments = ["-t", titleId]
 
-        task.launch()
+        do {
+            try task.run()
+        } catch {
+            log.error("Could not run vitaupdatelinks: \(error)")
+            return nil
+        }
 
         let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
         if var string = String(data: outdata, encoding: .utf8) {

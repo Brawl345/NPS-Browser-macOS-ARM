@@ -88,15 +88,22 @@ class ExtractionManager {
         }
         
         setStatus("Extracting...")
-        
-        let pkg2zipPath = Bundle.main.path(forResource: "pkg2zip", ofType: nil)
+
+        guard let pkg2zipPath = Bundle.main.path(forResource: "pkg2zip", ofType: nil),
+              let consoleType = item.consoleType,
+              let workingDirectory = Defaults[.xt_library_folder]?.appendingPathComponent(consoleType) else {
+            log.error("pkg2zip not found or extraction folder not configured")
+            completeDownload(status: "Extraction failed")
+            return
+        }
+
         let task = Process()
         let pipe = Pipe()
-        
-        task.currentDirectoryPath = (Defaults[.xt_library_folder]?.appendingPathComponent(item.consoleType!).path)!
 
-        task.launchPath = pkg2zipPath
-        
+        task.currentDirectoryURL = workingDirectory
+
+        task.executableURL = URL(fileURLWithPath: pkg2zipPath)
+
         task.arguments = getArguments()
         task.standardOutput = pipe
         
@@ -117,9 +124,10 @@ class ExtractionManager {
         }
         
         do {
-            try task.launch()
+            try task.run()
         } catch let error as NSError {
-            debugPrint(error)
+            log.error("Could not run pkg2zip: \(error)")
+            completeDownload(status: "Extraction failed")
         }
     }
     
