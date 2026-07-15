@@ -126,6 +126,13 @@ class NetworkManager {
             .then {_ in
                 Helpers().getDataController().filterType(itemType: ItemType(console: ct, fileType: ft), region: self.windowDelegate.getRegion())
         }
+            .catch { error in
+                log.error(error)
+                Helpers().getLoadingViewController().closeWindow()
+                Helpers().makeAlert(messageText: "Request failed",
+                                    informativeText: error.localizedDescription,
+                                    alertStyle: .warning)
+        }
     }
 
     func makeCompatPackRequestPromise(url: URL, isPatch: Bool) -> Promise<[CompatPack]?> {
@@ -179,6 +186,13 @@ class NetworkManager {
             }
             .then { _ in
                 Helpers().getLoadingViewController().closeWindow()
+        }
+            .catch { error in
+                log.error(error)
+                Helpers().getLoadingViewController().closeWindow()
+                Helpers().makeAlert(messageText: "Compat pack request failed",
+                                    informativeText: error.localizedDescription,
+                                    alertStyle: .warning)
         }
     }
 

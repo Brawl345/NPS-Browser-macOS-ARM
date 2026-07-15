@@ -43,6 +43,11 @@ class DetailsViewController: NSViewController {
                 let pxml = NetworkManager().fetchUpdateXML(url: url)
                 pxml().then { res in
                     self.sendDLData(url: res, fileType: .Update)
+                }.catch { error in
+                    log.error(error)
+                    Helpers().makeAlert(messageText: "Update not available",
+                                        informativeText: error.localizedDescription,
+                                        alertStyle: .warning)
                 }
             } else {
                 Helpers().makeAlert(messageText: "Update not available",
