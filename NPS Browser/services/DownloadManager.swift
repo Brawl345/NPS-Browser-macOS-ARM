@@ -26,17 +26,20 @@ class DownloadManager {
     func getDestination(data: DLItem) -> DownloadRequest.DownloadFileDestination {
         let destination: DownloadRequest.DownloadFileDestination = { request, response in
             // .pkg filename
-            let pathComponent = response.suggestedFilename!
-            let cf = data.consoleType
-            
-            var path: URL = Defaults[.dl_library_folder] ?? URL(fileURLWithPath: try! Folder.home.subfolder(named: "Downloads").path)
-            
-            path.appendPathComponent(cf!)
-//            var path: URL = Defaults[.dl_library_folder]!.appendingPathComponent(cf!)
+            let pathComponent = response.suggestedFilename
+                ?? data.downloadUrl?.lastPathComponent
+                ?? "download.pkg"
+
+            var path: URL = Defaults[.dl_library_folder]
+                ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads")
+
+            if let cf = data.consoleType {
+                path.appendPathComponent(cf)
+            }
             path.appendPathComponent(pathComponent)
 
-            let decodedurl = path.path.removingPercentEncoding
-            let url = URL(fileURLWithPath: decodedurl!)
+            let decodedurl = path.path.removingPercentEncoding ?? path.path
+            let url = URL(fileURLWithPath: decodedurl)
             return (url, [.removePreviousFile, .createIntermediateDirectories])
         }
         return destination

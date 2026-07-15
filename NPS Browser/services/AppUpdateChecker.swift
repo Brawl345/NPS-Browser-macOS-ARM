@@ -17,20 +17,21 @@ class AppUpdateChecker {
         
         sharedSession.request(url)
             .responseJSON { response in
-                
-                if response.result.isSuccess {
-                    let gHLatestRelease = try? newJSONDecoder().decode(GHLatestRelease.self, from: response.data!)
-                    let ghVersion = gHLatestRelease?.tagName.replacingOccurrences(of: "v", with: "")
-                    var browserDownloadUrl: String? = nil
-                    for asset in (gHLatestRelease?.assets)! {
-                        browserDownloadUrl = asset.browserDownloadURL
+                guard response.result.isSuccess, let data = response.data else {
+                    if let error = response.error {
+                        log.error(error)
                     }
-                    
-                    successHandler(ghVersion!, browserDownloadUrl!)
-                } else {
-                    log.error(response.error!)
-//                    Helpers().makeAlert(messageText: "App Update", informativeText: "There is no new update available.", alertStyle: .informational)
+                    return
                 }
+
+                guard let latestRelease = try? newJSONDecoder().decode(GHLatestRelease.self, from: data),
+                      let asset = latestRelease.assets.first else {
+                    log.error("Could not decode latest release info from GitHub.")
+                    return
+                }
+
+                let ghVersion = latestRelease.tagName.replacingOccurrences(of: "v", with: "")
+                successHandler(ghVersion, asset.browserDownloadURL)
         }
     }
     
@@ -40,12 +41,12 @@ class AppUpdateChecker {
         Helpers().getLoadingViewController().setLabel(text: "Fetching update...")
         
         let destination: DownloadRequest.DownloadFileDestination = { request, response in
-            // .pkg filename
-            let pathComponent = response.suggestedFilename!
-            var url: URL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-            url.appendPathComponent(pathComponent)
+            let pathComponent = response.suggestedFilename ?? url.lastPathComponent
+            var target: URL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+                ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads")
+            target.appendPathComponent(pathComponent)
 
-            return (url, [.removePreviousFile, .createIntermediateDirectories])
+            return (target, [.removePreviousFile, .createIntermediateDirectories])
         }
         
         sharedSession.download(url, to: destination)

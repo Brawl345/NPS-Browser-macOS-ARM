@@ -11,8 +11,18 @@ import Promises
 import Alamofire
 import SwiftyUserDefaults
 
+enum NetworkError: LocalizedError {
+    case invalidUpdateXML
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidUpdateXML: return "The update XML could not be parsed."
+        }
+    }
+}
+
 class NetworkManager {
-    
+
     let windowDelegate: WindowDelegate = Helpers().getWindowDelegate()
     
     let itemType = Helpers().getWindowDelegate().getItemType()
@@ -48,16 +58,14 @@ class NetworkManager {
                 }
                 
                 .responseString { response in
-                    let utf8Text = String(data: response.data!, encoding: .utf8)
-                    
-                    if (response.result.isSuccess) {
+                    switch response.result {
+                    case .success(let text):
                         self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
                         self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
-                        let parsedTSV = Parser().parseTSV(data: utf8Text!, itemType: self.itemType)
+                        let parsedTSV = Parser().parseTSV(data: text, itemType: self.itemType)
                         fulfill(parsedTSV)
-                    }
-                    else {
-                        reject(response.error!)
+                    case .failure(let error):
+                        reject(error)
                     }
             }
         }
@@ -145,16 +153,14 @@ class NetworkManager {
                     self.windowDelegate.getLoadingViewController().setProgress(amount: progress.fractionCompleted / 20)
                 }
                 .responseString { response in
-                    let utf8Text = String(data: response.data!, encoding: .utf8)
-
-                    if (response.result.isSuccess) {
+                    switch response.result {
+                    case .success(let text):
                         self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
                         self.windowDelegate.getLoadingViewController().setProgress(amount: 20)
-                        let parsed = Parser().parseCompatPackEntries(data: utf8Text!, isPatch: isPatch, typeName: typeName)
+                        let parsed = Parser().parseCompatPackEntries(data: text, isPatch: isPatch, typeName: typeName)
                         fulfill(parsed)
-                    }
-                    else {
-                        reject(response.error!)
+                    case .failure(let error):
+                        reject(error)
                     }
                 }
             }
@@ -176,7 +182,7 @@ class NetworkManager {
         }
     }
 
-    func getUpdateXMLURLFromHMAC(titleId: String) -> String {
+    func getUpdateXMLURLFromHMAC(titleId: String) -> String? {
         var output: [String] = []
         var error: [String] = []
 
@@ -209,9 +215,10 @@ class NetworkManager {
 
         if (status == 0) {
             debugPrint("Update URL Fetch SUCCESS!")
-            return output.first!
+            return output.first(where: { !$0.isEmpty })
         } else {
-            return error.first!
+            log.error("vitaupdatelinks failed: \(error.joined(separator: " "))")
+            return nil
         }
     }
 
@@ -223,18 +230,16 @@ class NetworkManager {
                 Promise<URL> { fulfill, reject in
                 sharedSession.request(url)
                     .responseString { response in
-                        
-                        if let data = response.value {
-                            let updateurl = Parser().parseUpdateXML(data: data)
-                            if (updateurl != nil) {
-                                fulfill(updateurl!)
+                        switch response.result {
+                        case .success(let data):
+                            if let updateurl = Parser().parseUpdateXML(data: data) {
+                                fulfill(updateurl)
+                            } else {
+                                reject(NetworkError.invalidUpdateXML)
                             }
-                            return
-
-                        } else {
-                            reject(response.error!)
+                        case .failure(let error):
+                            reject(error)
                         }
-                        
                 }
             }
         }

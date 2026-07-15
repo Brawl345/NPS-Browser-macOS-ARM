@@ -39,10 +39,15 @@ class DetailsViewController: NSViewController {
             self.sendDLData(url: url!, fileType: .Game)
         }
         if (chkDLUpdate.state == .on && chkDLUpdate.isEnabled && chkDLUpdate.isHidden == false) {
-            let url = NetworkManager().getUpdateXMLURLFromHMAC(titleId: getROManagedObject().titleId!)
-            let pxml = NetworkManager().fetchUpdateXML(url: url)
-            pxml().then { res in
-                self.sendDLData(url: res, fileType: .Update)
+            if let url = NetworkManager().getUpdateXMLURLFromHMAC(titleId: getROManagedObject().titleId!) {
+                let pxml = NetworkManager().fetchUpdateXML(url: url)
+                pxml().then { res in
+                    self.sendDLData(url: res, fileType: .Update)
+                }
+            } else {
+                Helpers().makeAlert(messageText: "Update not available",
+                                    informativeText: "The update link could not be determined.",
+                                    alertStyle: .warning)
             }
         }
         if (chkDLCompatPack.state == .on && chkDLCompatPack.isEnabled && chkDLCompatPack.isHidden == false) {
