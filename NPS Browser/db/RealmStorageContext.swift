@@ -154,11 +154,8 @@ extension RealmStorageContext {
             objects = objects?.sorted(byKeyPath: sorted.key, ascending: sorted.ascending)
         }
         
-        var accumulate: [T] = [T]()
-        for object in objects! {
-            accumulate.append(object as! T)
-        }
-        
+        let accumulate: [T] = objects?.compactMap { $0 as? T } ?? []
+
         completion(accumulate)
     }
 }

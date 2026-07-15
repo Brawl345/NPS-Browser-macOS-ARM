@@ -73,13 +73,8 @@ class DownloadManager {
         downloadItems.insert(data, at: 0)
         NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
         NotificationCenter.default.post(name: .downloadStarted, object: nil)
-        
-        let downloadItemsIndex = downloadItems.firstIndex(of: data)!
-        
-        // get object back out of downloadItems array so the async operation can use it and update the properties as it runs
-        let dlItem = self.downloadItems[downloadItemsIndex]
-        
-        let dlFileOperation = makeConcurrentOperation(dlItem: dlItem, request: request)
+
+        let dlFileOperation = makeConcurrentOperation(dlItem: data, request: request)
         self.queue.addOperation(dlFileOperation)
     }
     
@@ -94,16 +89,14 @@ class DownloadManager {
     }
 
     func removeCompleted() {
-        for item in downloadItems {
-            if (item.isRemovable) {
-              downloadItems.remove(at: downloadItems.firstIndex(of: item)!)
-            }
-        }
+        downloadItems.removeAll { $0.isRemovable }
     }
-    
+
     func moveToCompleted(item: DLItem) {
-        downloadItems.remove(at: downloadItems.firstIndex(of: item)!)
-        downloadItems.insert(item, at: downloadItems.endIndex)
+        if let index = downloadItems.firstIndex(of: item) {
+            downloadItems.remove(at: index)
+        }
+        downloadItems.append(item)
     }
     
     func getObjectQueue() -> [DLItem] {

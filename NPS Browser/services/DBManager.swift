@@ -36,22 +36,19 @@ class DBManager {
     
     // MARK: Read
     func fetch<T>(_ model: T.Type, predicate: NSPredicate? = nil, sorted: Sorted? = nil) -> [T]{
-        var objects = storage.realm?.objects(model as! Object.Type)
-        
+        guard var objects = storage.realm?.objects(model as! Object.Type) else {
+            return []
+        }
+
         if let predicate = predicate {
-            objects = objects?.filter(predicate)
+            objects = objects.filter(predicate)
         }
-        
+
         if let sorted = sorted {
-            objects = objects?.sorted(byKeyPath: sorted.key, ascending: sorted.ascending)
+            objects = objects.sorted(byKeyPath: sorted.key, ascending: sorted.ascending)
         }
-        
-        var arr: [T] = [T]()
-        for obj in objects! {
-            arr.append(obj as! T)
-        }
-        
-        return arr
+
+        return objects.compactMap { $0 as? T }
     }
     
     // MARK: Delete
