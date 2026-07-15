@@ -18,9 +18,20 @@ class DownloadManager {
     
     var downloadItems: [DLItem] = []
     let queue = Queuer(name: "DLQueue", maxConcurrentOperationCount: Defaults[.dl_concurrent_downloads], qualityOfService: .default)
-    
+    private var defaultsObserver: NSObjectProtocol?
+
     init() {
         restoreDownloadList()
+
+        defaultsObserver = NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification,
+                                                                  object: nil,
+                                                                  queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            let count = Defaults[.dl_concurrent_downloads]
+            if count > 0 && self.queue.maxConcurrentOperationCount != count {
+                self.queue.maxConcurrentOperationCount = count
+            }
+        }
     }
     
     func getDestination(data: DLItem) -> DownloadRequest.DownloadFileDestination {
