@@ -12,15 +12,16 @@ import Fuzi
 class Parser {
     func parseTSV(data: String, itemType: ItemType) -> [TSVData] {
         var parsedData: [TSVData] = []
-        var rows = data.split(separator: "\r\n")
+        let rows = data.components(separatedBy: .newlines).filter { !$0.isEmpty }
         guard !rows.isEmpty else { return parsedData }
-        rows.remove(at: 0)
-        
-        for row in rows {
+        parsedData.reserveCapacity(rows.count - 1)
+
+        for row in rows.dropFirst() {
             let values = row.components(separatedBy: "\t")
+            guard values.count > 1 else { continue }
 
             let tsvData = TSVData(type: itemType, values: values)
-            
+
             parsedData.append(tsvData)
         }
         return parsedData
@@ -28,19 +29,17 @@ class Parser {
     
     func parseCompatPackEntries(data: String, isPatch: Bool = false, typeName: String) -> [CompatPack] {
         var parsedData: [CompatPack] = []
-        let rows = data.split(separator: "\n")
+        let rows = data.components(separatedBy: .newlines).filter { !$0.isEmpty }
+        let baseURL = "https://gitlab.com/nopaystation_repos/nps_compati_packs/raw/master/"
 
         for row in rows {
-            let baseURL = "https://gitlab.com/nopaystation_repos/nps_compati_packs/raw/master/"
             let components = row.components(separatedBy: "=")
             let path = components.first ?? ""
-            var title_id: String
-            if (isPatch) {
-                title_id = path.components(separatedBy: "/")[1]
-            } else {
-                title_id = path.components(separatedBy: "/")[0]
-            }
-            
+            let pathComponents = path.components(separatedBy: "/")
+            let titleIdIndex = isPatch ? 1 : 0
+            guard pathComponents.indices.contains(titleIdIndex) else { continue }
+            let title_id = pathComponents[titleIdIndex]
+
             let pack = CompatPack()
             pack.titleId = title_id
             pack.downloadUrl = "\(baseURL)\(path)"
@@ -62,12 +61,11 @@ class Parser {
                 guard let lastpkg = root.firstChild(tag: "tag")?.children.last else {
                     return nil
                 }
-                
-                let hp = lastpkg.firstChild(tag: "hybrid_package")
-                if hp == nil {
-                    x = lastpkg.attributes["url"]!
+
+                if let hp = lastpkg.firstChild(tag: "hybrid_package") {
+                    x = hp.attributes["url"] ?? ""
                 } else {
-                    x = (hp?.attributes["url"])!
+                    x = lastpkg.attributes["url"] ?? ""
                 }
             }
         } catch let error {
