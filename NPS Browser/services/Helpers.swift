@@ -49,28 +49,6 @@ class Helpers {
         }
     }
 
-    static func setupDownloadsDirectory() {
-        let fileManager = FileManager.default
-        let fallback = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
-        let dlDirName = "NPS Downloads"
-        let base = (Defaults[.dl_library_location] ?? fallback).asFileURL
-
-        do {
-            try fileManager.createDirectory(at: base.appendingPathComponent(dlDirName, isDirectory: true),
-                                            withIntermediateDirectories: true)
-        } catch {
-            log.error("Could not create downloads directory at \(base.path): \(error)")
-            Defaults[.dl_library_location] = fallback
-
-            do {
-                try fileManager.createDirectory(at: fallback.appendingPathComponent(dlDirName, isDirectory: true),
-                                                withIntermediateDirectories: true)
-            } catch {
-                log.error("Could not create fallback downloads directory: \(error)")
-            }
-        }
-    }
-
     func makeAlert(messageText: String = "", informativeText: String = "", alertStyle: NSAlert.Style = .warning) {
         let alert = NSAlert()
         alert.messageText = messageText
