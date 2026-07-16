@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CryptoKit
 import Promises
 import Alamofire
 import SwiftyUserDefaults
@@ -206,52 +207,15 @@ class NetworkManager {
     }
 
     func getUpdateXMLURLFromHMAC(titleId: String) -> String? {
-        var output: [String] = []
-        var error: [String] = []
+        let key = SymmetricKey(data: Data([
+            0xE5, 0xE2, 0x78, 0xAA, 0x1E, 0xE3, 0x40, 0x82, 0xA0, 0x88, 0x27, 0x9C, 0x83, 0xF9, 0xBB, 0xC8,
+            0x06, 0x82, 0x1C, 0x52, 0xF2, 0xAB, 0x5D, 0x2B, 0x4A, 0xBD, 0x99, 0x54, 0x50, 0x35, 0x51, 0x14
+        ]))
 
-        guard let vitaupdatelinksPath = Bundle.main.path(forResource: "vitaupdatelinks", ofType: nil) else {
-            log.error("vitaupdatelinks binary not found in bundle")
-            return nil
-        }
+        let hmac = HMAC<SHA256>.authenticationCode(for: Data("np_\(titleId)".utf8), using: key)
+        let hash = hmac.map { String(format: "%02x", $0) }.joined()
 
-        let task = Process()
-        let outpipe = Pipe()
-        task.standardOutput = outpipe
-        let errpipe = Pipe()
-        task.standardError = errpipe
-
-        task.executableURL = URL(fileURLWithPath: vitaupdatelinksPath)
-        task.arguments = ["-t", titleId]
-
-        do {
-            try task.run()
-        } catch {
-            log.error("Could not run vitaupdatelinks: \(error)")
-            return nil
-        }
-
-        let outdata = outpipe.fileHandleForReading.readDataToEndOfFile()
-        if var string = String(data: outdata, encoding: .utf8) {
-            string = string.trimmingCharacters(in: .newlines)
-            output = string.components(separatedBy: "\n")
-        }
-
-        let errdata = errpipe.fileHandleForReading.readDataToEndOfFile()
-        if var string = String(data: errdata, encoding: .utf8) {
-            string = string.trimmingCharacters(in: .newlines)
-            error = string.components(separatedBy: "\n")
-        }
-
-        task.waitUntilExit()
-        let status = task.terminationStatus
-
-        if (status == 0) {
-            debugPrint("Update URL Fetch SUCCESS!")
-            return output.first(where: { !$0.isEmpty })
-        } else {
-            log.error("vitaupdatelinks failed: \(error.joined(separator: " "))")
-            return nil
-        }
+        return "https://gs-sec.ww.np.dl.playstation.net/pl/np/\(titleId)/\(hash)/\(titleId)-ver.xml"
     }
 
     func fetchUpdateXML(url: String) -> (() -> (Promise<URL>)) {

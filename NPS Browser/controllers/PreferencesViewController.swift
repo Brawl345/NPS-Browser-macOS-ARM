@@ -137,6 +137,7 @@ class PreferencesViewController: NSViewController {
                 self.dlPathField.stringValue = self.dlLocation?.path ?? ""
                 Defaults[.dl_library_location] = self.dlLocation!.asFileURL
                 Defaults[.dl_library_folder]   = self.dlLocation!.asFileURL
+                Helpers.storeFolderBookmark(url: panel.urls[0], key: .dl_library_bookmark)
                 Helpers.setupDownloadsDirectory()
             }
         }
@@ -155,6 +156,7 @@ class PreferencesViewController: NSViewController {
                 self.chkXTField.stringValue = self.xtLocation?.path ?? ""
                 Defaults[.xt_library_location] = self.xtLocation!.asFileURL
                 Defaults[.xt_library_folder]   = self.xtLocation!.asFileURL
+                Helpers.storeFolderBookmark(url: panel.urls[0], key: .xt_library_bookmark)
                 Helpers.setupDownloadsDirectory()
             }
         }

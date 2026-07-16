@@ -12,6 +12,8 @@ import Zip
 import SwiftyUserDefaults
 
 class ExtractionManager {
+    private static let pkg2zipQueue = DispatchQueue(label: "pkg2zip", qos: .userInitiated)
+
     private var item: DLItem
     private var downloadManager: DownloadManager
     private var isPS3: Bool = false
@@ -87,45 +89,45 @@ class ExtractionManager {
         
         setStatus(DLStatus.extracting)
 
-        guard let pkg2zipPath = Bundle.main.path(forResource: "pkg2zip", ofType: nil),
-              let consoleType = item.consoleType,
+        guard let consoleType = item.consoleType,
               let workingDirectory = Defaults[.xt_library_folder]?.asFileURL.appendingPathComponent(consoleType) else {
-            log.error("pkg2zip not found or extraction folder not configured")
+            log.error("extraction folder not configured")
             completeDownload(status: DLStatus.extractionFailed)
             return
         }
 
-        let task = Process()
-        let pipe = Pipe()
+        let arguments = ["pkg2zip"] + getArguments()
 
-        task.currentDirectoryURL = workingDirectory
+        ExtractionManager.pkg2zipQueue.async {
+            do {
+                try FileManager.default.createDirectory(at: workingDirectory, withIntermediateDirectories: true)
+            } catch let error as NSError {
+                log.error("Could not create extraction folder: \(error)")
+                DispatchQueue.main.async {
+                    self.completeDownload(status: DLStatus.extractionFailed)
+                }
+                return
+            }
 
-        task.executableURL = URL(fileURLWithPath: pkg2zipPath)
+            var argv: [UnsafeMutablePointer<CChar>?] = arguments.map { strdup($0) }
+            defer { argv.forEach { free($0) } }
 
-        task.arguments = getArguments()
-        task.standardOutput = pipe
-        
-        task.terminationHandler = { task in
+            let status = argv.withUnsafeMutableBufferPointer { buffer in
+                pkg2zip_run(workingDirectory.path, Int32(buffer.count), buffer.baseAddress)
+            }
+
             DispatchQueue.main.async {
-                let taskStatus = task.terminationStatus
-                if taskStatus == 0 {
+                if status == 0 {
                     debugPrint("Success!")
                     self.setStatus(DLStatus.extractionComplete)
                     self.item.makeViewable()
                     Helpers().makeNotification(title: self.item.name!, subtitle: self.item.status!)
                 } else {
-                    debugPrint("Task Failed")
+                    log.error("pkg2zip failed: \(String(cString: pkg2zip_error_message()))")
                 }
                 self.cleanup()
                 NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
             }
-        }
-        
-        do {
-            try task.run()
-        } catch let error as NSError {
-            log.error("Could not run pkg2zip: \(error)")
-            completeDownload(status: DLStatus.extractionFailed)
         }
     }
     

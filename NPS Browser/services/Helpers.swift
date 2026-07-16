@@ -19,6 +19,36 @@ extension URL {
 
 class Helpers {
 
+    static func storeFolderBookmark(url: URL, key: DefaultsKey<Data?>) {
+        do {
+            Defaults[key] = try url.bookmarkData(options: .withSecurityScope,
+                                                 includingResourceValuesForKeys: nil,
+                                                 relativeTo: nil)
+        } catch {
+            log.error("Could not create bookmark for \(url.path): \(error)")
+        }
+    }
+
+    static func restoreFolderAccess(key: DefaultsKey<Data?>) {
+        guard let data = Defaults[key] else { return }
+        do {
+            var isStale = false
+            let url = try URL(resolvingBookmarkData: data,
+                              options: .withSecurityScope,
+                              relativeTo: nil,
+                              bookmarkDataIsStale: &isStale)
+            guard url.startAccessingSecurityScopedResource() else {
+                log.error("Could not access security-scoped folder \(url.path)")
+                return
+            }
+            if isStale {
+                storeFolderBookmark(url: url, key: key)
+            }
+        } catch {
+            log.error("Could not resolve folder bookmark: \(error)")
+        }
+    }
+
     static func setupDownloadsDirectory() {
         let fileManager = FileManager.default
         let fallback = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)

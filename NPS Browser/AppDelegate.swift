@@ -23,6 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         setupSwiftyBeaverLogging()
+        Helpers.restoreFolderAccess(key: .dl_library_bookmark)
+        Helpers.restoreFolderAccess(key: .xt_library_bookmark)
         migrateSourceURLsToHTTPS()
         setupNotifications()
         dockProgressController = DockProgressController(downloadManager: downloadManager)

@@ -23,10 +23,12 @@ extension DefaultsKeys {
     
     static let dl_library_location        = DefaultsKey<URL?>("dl_library_location", defaultValue: URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads"))
     static let dl_library_folder          = DefaultsKey<URL?>("dl_library_folder", defaultValue: URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads").appendingPathComponent("NPS Downloads", isDirectory: true))
+    static let dl_library_bookmark        = DefaultsKey<Data?>("dl_library_bookmark")
     static let dl_concurrent_downloads    = DefaultsKey<Int>("dl_concurrent_downloads", defaultValue: 3)
 
     static let xt_library_location        = DefaultsKey<URL?>("xt_library_location", defaultValue: URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads"))
     static let xt_library_folder          = DefaultsKey<URL?>("xt_library_folder", defaultValue: URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads").appendingPathComponent("NPS Downloads", isDirectory: true))
+    static let xt_library_bookmark        = DefaultsKey<Data?>("xt_library_bookmark")
 
     static let xt_extract_after_downloading   = DefaultsKey<Bool>("xt_extract_after_downloading", defaultValue: true)
     static let xt_keep_pkg                    = DefaultsKey<Bool>("xt_keep_pkg", defaultValue: false)

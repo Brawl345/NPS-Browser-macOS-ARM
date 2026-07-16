@@ -26,10 +26,8 @@
 		515F58F522C663D2003370DA /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515F58F422C663D2003370DA /* Files.swift */; };
 		516019E82131D65300BD7B0C /* DBMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516019E72131D65300BD7B0C /* DBMigration.swift */; };
 		5167430520AFE098003AFC4D /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5167430420AFE098003AFC4D /* DownloadManager.swift */; };
-		AB12CD3400000002000000AA /* DockProgressController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3400000001000000AA /* DockProgressController.swift */; };
 		516A1B7720CAE276004D6AE5 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 516A1B7620CAE275004D6AE5 /* CHANGELOG.md */; };
 		516A1B7920CAE28A004D6AE5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 516A1B7820CAE28A004D6AE5 /* README.md */; };
-		5177A78620C33C0F002F81F9 /* pkg2zip in Resources */ = {isa = PBXBuildFile; fileRef = 5177A78520C33C0E002F81F9 /* pkg2zip */; };
 		5177A78820C3508D002F81F9 /* ExtractionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177A78720C3508D002F81F9 /* ExtractionManager.swift */; };
 		517CD22C20AFA4A200C33623 /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CD22B20AFA4A200C33623 /* DownloadViewController.swift */; };
 		517FD71F2114B7FF00E56CB6 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517FD71E2114B7FF00E56CB6 /* Parser.swift */; };
@@ -58,12 +56,23 @@
 		51B12A1920B0CD1E00E83844 /* DownloadListItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B12A1820B0CD1E00E83844 /* DownloadListItemCellView.swift */; };
 		51B1A315209511A6009C799C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B1A314209511A6009C799C /* PreferencesViewController.swift */; };
 		51E6684D2121447600FC154A /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E6684C2121447600FC154A /* AppUpdateChecker.swift */; };
-		51E82B0D210CEBAC00E68A31 /* vitaupdatelinks in Resources */ = {isa = PBXBuildFile; fileRef = 51E82B0C210CEBAC00E68A31 /* vitaupdatelinks */; };
 		51EBE81F2094E094005D44DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EBE81E2094E094005D44DC /* AppDelegate.swift */; };
 		51EBE8212094E094005D44DC /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EBE8202094E094005D44DC /* DataViewController.swift */; };
 		51EBE8262094E095005D44DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE8252094E095005D44DC /* Assets.xcassets */; };
 		51EBE8292094E095005D44DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE8272094E095005D44DC /* Main.storyboard */; };
 		5BE2FA2370454E138B7AB39E /* SharedSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4912D119422E4B42943163C8 /* SharedSession.swift */; };
+		AB12CD3400000002000000AA /* DockProgressController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3400000001000000AA /* DockProgressController.swift */; };
+		AB12CD3600000001000000AA /* pkg2zip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000001000000AA /* pkg2zip.c */; };
+		AB12CD3600000002000000AA /* pkg2zip_aes.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000002000000AA /* pkg2zip_aes.c */; };
+		AB12CD3600000003000000AA /* pkg2zip_crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000003000000AA /* pkg2zip_crc32.c */; };
+		AB12CD3600000004000000AA /* pkg2zip_out.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000004000000AA /* pkg2zip_out.c */; };
+		AB12CD3600000005000000AA /* pkg2zip_psp.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000005000000AA /* pkg2zip_psp.c */; };
+		AB12CD3600000006000000AA /* pkg2zip_sys.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000006000000AA /* pkg2zip_sys.c */; };
+		AB12CD3600000007000000AA /* pkg2zip_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000007000000AA /* pkg2zip_zip.c */; };
+		AB12CD3600000008000000AA /* pkg2zip_zrif.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000008000000AA /* pkg2zip_zrif.c */; };
+		AB12CD3600000009000000AA /* miniz_tdef.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3500000009000000AA /* miniz_tdef.c */; };
+		AB12CD360000000A000000AA /* puff.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD350000000A000000AA /* puff.c */; };
+		AB12CD360000000B000000AA /* pkg2zip_bridge.c in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD350000000B000000AA /* pkg2zip_bridge.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,10 +88,8 @@
 		515F58F422C663D2003370DA /* Files.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		516019E72131D65300BD7B0C /* DBMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBMigration.swift; sourceTree = "<group>"; };
 		5167430420AFE098003AFC4D /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
-		AB12CD3400000001000000AA /* DockProgressController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockProgressController.swift; sourceTree = "<group>"; };
 		516A1B7620CAE275004D6AE5 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		516A1B7820CAE28A004D6AE5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5177A78520C33C0E002F81F9 /* pkg2zip */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = pkg2zip; sourceTree = "<group>"; };
 		5177A78720C3508D002F81F9 /* ExtractionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractionManager.swift; sourceTree = "<group>"; };
 		517CD22B20AFA4A200C33623 /* DownloadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
 		517FD71E2114B7FF00E56CB6 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
@@ -111,13 +118,36 @@
 		51B12A1820B0CD1E00E83844 /* DownloadListItemCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListItemCellView.swift; sourceTree = "<group>"; };
 		51B1A314209511A6009C799C /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		51E6684C2121447600FC154A /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
-		51E82B0C210CEBAC00E68A31 /* vitaupdatelinks */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = vitaupdatelinks; sourceTree = "<group>"; };
 		51EBE81B2094E094005D44DC /* NPS Browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NPS Browser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		51EBE81E2094E094005D44DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		51EBE8202094E094005D44DC /* DataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewController.swift; sourceTree = "<group>"; };
 		51EBE8252094E095005D44DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51EBE8282094E095005D44DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		51EBE82A2094E095005D44DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB12CD3400000001000000AA /* DockProgressController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockProgressController.swift; sourceTree = "<group>"; };
+		AB12CD3500000001000000AA /* pkg2zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip.c; sourceTree = "<group>"; };
+		AB12CD3500000002000000AA /* pkg2zip_aes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_aes.c; sourceTree = "<group>"; };
+		AB12CD3500000003000000AA /* pkg2zip_crc32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_crc32.c; sourceTree = "<group>"; };
+		AB12CD3500000004000000AA /* pkg2zip_out.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_out.c; sourceTree = "<group>"; };
+		AB12CD3500000005000000AA /* pkg2zip_psp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_psp.c; sourceTree = "<group>"; };
+		AB12CD3500000006000000AA /* pkg2zip_sys.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_sys.c; sourceTree = "<group>"; };
+		AB12CD3500000007000000AA /* pkg2zip_zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_zip.c; sourceTree = "<group>"; };
+		AB12CD3500000008000000AA /* pkg2zip_zrif.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_zrif.c; sourceTree = "<group>"; };
+		AB12CD3500000009000000AA /* miniz_tdef.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = miniz_tdef.c; sourceTree = "<group>"; };
+		AB12CD350000000A000000AA /* puff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = puff.c; sourceTree = "<group>"; };
+		AB12CD350000000B000000AA /* pkg2zip_bridge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pkg2zip_bridge.c; sourceTree = "<group>"; };
+		AB12CD350000000C000000AA /* pkg2zip_aes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_aes.h; sourceTree = "<group>"; };
+		AB12CD350000000D000000AA /* pkg2zip_crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_crc32.h; sourceTree = "<group>"; };
+		AB12CD350000000E000000AA /* pkg2zip_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_out.h; sourceTree = "<group>"; };
+		AB12CD350000000F000000AA /* pkg2zip_psp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_psp.h; sourceTree = "<group>"; };
+		AB12CD3500000010000000AA /* pkg2zip_sys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_sys.h; sourceTree = "<group>"; };
+		AB12CD3500000011000000AA /* pkg2zip_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_utils.h; sourceTree = "<group>"; };
+		AB12CD3500000012000000AA /* pkg2zip_zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_zip.h; sourceTree = "<group>"; };
+		AB12CD3500000013000000AA /* pkg2zip_zrif.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_zrif.h; sourceTree = "<group>"; };
+		AB12CD3500000014000000AA /* miniz_tdef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniz_tdef.h; sourceTree = "<group>"; };
+		AB12CD3500000015000000AA /* puff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = puff.h; sourceTree = "<group>"; };
+		AB12CD3500000016000000AA /* pkg2zip_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pkg2zip_bridge.h; sourceTree = "<group>"; };
+		AB12CD3500000017000000AA /* NPS Browser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NPS Browser-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,8 +298,8 @@
 			isa = PBXGroup;
 			children = (
 				515F58F422C663D2003370DA /* Files.swift */,
-				51E82B0C210CEBAC00E68A31 /* vitaupdatelinks */,
-				5177A78520C33C0E002F81F9 /* pkg2zip */,
+				AB12CD3500000017000000AA /* NPS Browser-Bridging-Header.h */,
+				AB12CD3700000001000000AA /* pkg2zip */,
 				51A767A120A6992500052F53 /* controllers */,
 				51ABB7552115D80F009C98DA /* db */,
 				51A767A220A699AC00052F53 /* models */,
@@ -284,6 +314,35 @@
 				5121752E20A73EBC00772C86 /* NPS Browser.entitlements */,
 			);
 			path = "NPS Browser";
+			sourceTree = "<group>";
+		};
+		AB12CD3700000001000000AA /* pkg2zip */ = {
+			isa = PBXGroup;
+			children = (
+				AB12CD3500000009000000AA /* miniz_tdef.c */,
+				AB12CD3500000014000000AA /* miniz_tdef.h */,
+				AB12CD3500000001000000AA /* pkg2zip.c */,
+				AB12CD3500000002000000AA /* pkg2zip_aes.c */,
+				AB12CD350000000C000000AA /* pkg2zip_aes.h */,
+				AB12CD350000000B000000AA /* pkg2zip_bridge.c */,
+				AB12CD3500000016000000AA /* pkg2zip_bridge.h */,
+				AB12CD3500000003000000AA /* pkg2zip_crc32.c */,
+				AB12CD350000000D000000AA /* pkg2zip_crc32.h */,
+				AB12CD3500000004000000AA /* pkg2zip_out.c */,
+				AB12CD350000000E000000AA /* pkg2zip_out.h */,
+				AB12CD3500000005000000AA /* pkg2zip_psp.c */,
+				AB12CD350000000F000000AA /* pkg2zip_psp.h */,
+				AB12CD3500000006000000AA /* pkg2zip_sys.c */,
+				AB12CD3500000010000000AA /* pkg2zip_sys.h */,
+				AB12CD3500000011000000AA /* pkg2zip_utils.h */,
+				AB12CD3500000007000000AA /* pkg2zip_zip.c */,
+				AB12CD3500000012000000AA /* pkg2zip_zip.h */,
+				AB12CD3500000008000000AA /* pkg2zip_zrif.c */,
+				AB12CD3500000013000000AA /* pkg2zip_zrif.h */,
+				AB12CD350000000A000000AA /* puff.c */,
+				AB12CD3500000015000000AA /* puff.h */,
+			);
+			path = pkg2zip;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,7 +396,7 @@
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -379,13 +438,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51E82B0D210CEBAC00E68A31 /* vitaupdatelinks in Resources */,
 				516A1B7920CAE28A004D6AE5 /* README.md in Resources */,
 				51843FD120CB9DF2009AE9A4 /* .gitignore in Resources */,
 				51EBE8262094E095005D44DC /* Assets.xcassets in Resources */,
 				518A892E213062E800821EE7 /* LICENSE.md in Resources */,
 				516A1B7720CAE276004D6AE5 /* CHANGELOG.md in Resources */,
-				5177A78620C33C0F002F81F9 /* pkg2zip in Resources */,
 				51EBE8292094E095005D44DC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,6 +492,17 @@
 				5181948E20DDB52C009282AB /* NSTableView+keydown.swift in Sources */,
 				5108B79E211641190065BA71 /* TSVData.swift in Sources */,
 				5192CE8A211F19FA004A2E90 /* RealmStorageContext.swift in Sources */,
+				AB12CD3600000001000000AA /* pkg2zip.c in Sources */,
+				AB12CD3600000002000000AA /* pkg2zip_aes.c in Sources */,
+				AB12CD3600000003000000AA /* pkg2zip_crc32.c in Sources */,
+				AB12CD3600000004000000AA /* pkg2zip_out.c in Sources */,
+				AB12CD3600000005000000AA /* pkg2zip_psp.c in Sources */,
+				AB12CD3600000006000000AA /* pkg2zip_sys.c in Sources */,
+				AB12CD3600000007000000AA /* pkg2zip_zip.c in Sources */,
+				AB12CD3600000008000000AA /* pkg2zip_zrif.c in Sources */,
+				AB12CD3600000009000000AA /* miniz_tdef.c in Sources */,
+				AB12CD360000000A000000AA /* puff.c in Sources */,
+				AB12CD360000000B000000AA /* pkg2zip_bridge.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,6 +660,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "NPS Browser/NPS Browser.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -614,6 +683,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "NPS Browser/NPS Browser-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "";
@@ -624,15 +694,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "NPS Browser/NPS Browser.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 72;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
+				EXCLUDED_ARCHS = x86_64;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/NPS Browser/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
@@ -643,14 +716,13 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.4.9;
-				ARCHS = arm64;
-				EXCLUDED_ARCHS = x86_64;
 				OTHER_SWIFT_FLAGS = "$(inherited)\n$(inherited)\n$(inherited)\n \"-D\"\n \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = "JK3Y.NPS-Browser";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "NPS Browser/NPS Browser-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "";
 			};

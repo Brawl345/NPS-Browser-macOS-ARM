@@ -13,7 +13,6 @@ class DownloadListItemCellView: NSTableCellView {
 
     @IBOutlet weak var btnAction: NSButton!
     var item: DLItem?
-    var dlLoc = Defaults[.dl_library_folder]?.asFileURL
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
@@ -50,38 +49,46 @@ class DownloadListItemCellView: NSTableCellView {
     }
     
     func viewFile() {
-        if Defaults[.xt_extract_after_downloading] {
-            let ct:ConsoleType = ConsoleType(rawValue: item!.consoleType!)!
-            let ft:FileType = FileType(rawValue: item!.fileType!)!
-            
-            dlLoc?.appendPathComponent(item!.consoleType!)
-            
+        guard let item = item,
+              let consoleType = item.consoleType,
+              let dlFolder = Defaults[.dl_library_folder]?.asFileURL else { return }
+
+        var location = dlFolder.appendingPathComponent(consoleType, isDirectory: true)
+
+        if Defaults[.xt_extract_after_downloading],
+           let ct = ConsoleType(rawValue: consoleType),
+           let ft = FileType(rawValue: item.fileType!),
+           let xtFolder = Defaults[.xt_library_folder]?.asFileURL {
+            location = xtFolder.appendingPathComponent(consoleType, isDirectory: true)
+
             switch (ct) {
             case .PSV:
-                switch(ft) {
+                switch (ft) {
                 case .Game:
-                    dlLoc?.appendPathComponent("app/\(item!.titleId!)")
+                    location.appendPathComponent("app/\(item.titleId!)")
                 case .DLC:
-                    dlLoc?.appendPathComponent("addcont/\(item!.titleId!)")
+                    location.appendPathComponent("addcont/\(item.titleId!)")
                 case .Update:
-                    dlLoc?.appendPathComponent("patch/\(item!.titleId!)")
+                    location.appendPathComponent("patch/\(item.titleId!)")
                 case .Theme:
-                    dlLoc?.appendPathComponent("bgdl/t")
+                    location.appendPathComponent("bgdl/t")
                 default: break
                 }
-            case .PS3:
-                NSWorkspace.shared.open(dlLoc!)
             case .PSP:
-                dlLoc?.appendPathComponent("pspemu/ISO")
+                location.appendPathComponent("pspemu/ISO")
             case .PSX:
-                dlLoc?.appendPathComponent("pspemu/")
+                location.appendPathComponent("pspemu")
+            case .PS3:
+                location = dlFolder.appendingPathComponent(consoleType, isDirectory: true)
             }
         }
-        
-        let str = dlLoc?.absoluteString.removingPercentEncoding ?? ""
-        let path = URL(fileURLWithPath: str, isDirectory: true)
-        
-        NSWorkspace.shared.open(path)
+
+        if !FileManager.default.fileExists(atPath: location.path) {
+            log.warning("Reveal target \(location.path) does not exist, falling back to library folder")
+            location = dlFolder
+        }
+
+        NSWorkspace.shared.open(location)
     }
     
     func resumeRequest() {
