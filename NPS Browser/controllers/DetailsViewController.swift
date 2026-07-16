@@ -34,9 +34,10 @@ class DetailsViewController: NSViewController {
 
         var baseDLItem: DLItem? = nil
 
-        if (chkDLGame.state == .on) {
-            let url = try? obj.pkgDirectLink!.asURL()
-            self.sendDLData(url: url!, fileType: .Game)
+        if (chkDLGame.state == .on && obj.hasDownloadLink) {
+            if let url = try? obj.pkgDirectLink!.asURL() {
+                self.sendDLData(url: url, fileType: .Game)
+            }
         }
         if (chkDLUpdate.state == .on && chkDLUpdate.isEnabled && chkDLUpdate.isHidden == false) {
             if let url = GameUpdateService.shared.cachedUpdateURL(titleId: obj.titleId!) {
@@ -92,14 +93,11 @@ class DetailsViewController: NSViewController {
     }
 
     func enableBookmarkButton() {
-        let link = getROManagedObject().pkgDirectLink
-        if (link == "MISSING") {
-            btnDownload.isEnabled = false
-            chkBookmark.isEnabled = false
-        } else {
-            btnDownload.isEnabled = true
-            chkBookmark.isEnabled = true
-        }
+        let obj = getROManagedObject()
+        let hasLink = obj.hasDownloadLink
+        btnDownload.isEnabled = hasLink
+        chkBookmark.isEnabled = hasLink
+        btnDownload.toolTip = hasLink ? nil : (obj.pkgDirectLink?.capitalized ?? "No download available")
     }
     
     func enableDownloadOptions() {

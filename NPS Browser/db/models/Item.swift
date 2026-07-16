@@ -47,7 +47,11 @@ class Item: Object {
     dynamic var sha256                  : String?
     
     dynamic var pk: String = ""
-    
+
+    var hasDownloadLink: Bool {
+        return pkgDirectLink?.hasPrefix("http") == true
+    }
+
     override static func primaryKey() -> String {
         return Item.Property.uuid.rawValue
     }

@@ -35,7 +35,7 @@ class DataViewController: NSViewController, ToolbarDelegate {
             requestedTypes.insert("\(ct)_\(ft)")
             NetworkManager().makeRequest()
         } else {
-            setArrayControllerContent(content: items?.filter(NSPredicate(format: "consoleType == %@ AND fileType == %@ AND region == %@ AND pkgDirectLink != 'MISSING'", ct, ft, reg)))
+            setArrayControllerContent(content: items?.filter(NSPredicate(format: makePredicateString(), ct, ft, reg)))
         }
     }
 
@@ -56,7 +56,7 @@ class DataViewController: NSViewController, ToolbarDelegate {
         let it = windowDelegate.getItemType()
         
         if Defaults[.dsp_hide_invalid_url_items] {
-            str.append(" AND pkgDirectLink != 'MISSING'")
+            str.append(" AND pkgDirectLink BEGINSWITH 'http'")
             
             switch( it.console ) {
             case .PSV:
