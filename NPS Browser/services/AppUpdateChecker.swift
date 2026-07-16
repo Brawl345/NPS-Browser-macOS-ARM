@@ -16,22 +16,19 @@ class AppUpdateChecker {
         let url = "https://api.github.com/repos/JK3Y/NPS-Browser-macOS/releases/latest"
         
         sharedSession.request(url)
-            .responseJSON { response in
-                guard response.result.isSuccess, let data = response.data else {
-                    if let error = response.error {
-                        log.error(error)
+            .responseDecodable(of: GHLatestRelease.self, decoder: newJSONDecoder()) { response in
+                switch response.result {
+                case .success(let latestRelease):
+                    guard let asset = latestRelease.assets.first else {
+                        log.error("Latest GitHub release has no assets.")
+                        return
                     }
-                    return
-                }
 
-                guard let latestRelease = try? newJSONDecoder().decode(GHLatestRelease.self, from: data),
-                      let asset = latestRelease.assets.first else {
-                    log.error("Could not decode latest release info from GitHub.")
-                    return
+                    let ghVersion = latestRelease.tagName.replacingOccurrences(of: "v", with: "")
+                    successHandler(ghVersion, asset.browserDownloadURL)
+                case .failure(let error):
+                    log.error(error)
                 }
-
-                let ghVersion = latestRelease.tagName.replacingOccurrences(of: "v", with: "")
-                successHandler(ghVersion, asset.browserDownloadURL)
         }
     }
     
@@ -40,7 +37,7 @@ class AppUpdateChecker {
         Helpers().showLoadingViewController()
         Helpers().getLoadingViewController().setLabel(text: "Fetching update...")
         
-        let destination: DownloadRequest.DownloadFileDestination = { request, response in
+        let destination: DownloadRequest.Destination = { request, response in
             let pathComponent = response.suggestedFilename ?? url.lastPathComponent
             var target: URL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
                 ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads")
@@ -55,13 +52,13 @@ class AppUpdateChecker {
                 Helpers().getLoadingViewController().setProgress(amount: progress.fractionCompleted * 100)
         }
             .responseString { response in
-                response.result.ifSuccess {
+                switch response.result {
+                case .success:
                     Helpers().makeAlert(messageText: "Update Downloaded", informativeText: "Update has been downloaded.", alertStyle: .informational)
-                }
-                response.result.ifFailure {
+                case .failure:
                     Helpers().makeAlert(messageText: "Download failed", informativeText: "The update has failed to download.", alertStyle: .warning)
                 }
-                
+
                 Helpers().getLoadingViewController().closeWindow()
         }
     }

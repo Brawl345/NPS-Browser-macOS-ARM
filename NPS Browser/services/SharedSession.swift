@@ -8,19 +8,19 @@ import Alamofire
 
 // Sony ships an incomplete certificate chain on *.playstation.net,
 // so evaluation is disabled for those hosts only.
-private class PlayStationTrustPolicyManager: ServerTrustPolicyManager {
-    override func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+private final class PlayStationTrustManager: ServerTrustManager, @unchecked Sendable {
+    override func serverTrustEvaluator(forHost host: String) throws -> ServerTrustEvaluating? {
         if host == "playstation.net" || host.hasSuffix(".playstation.net") {
-            return .disableEvaluation
+            return DisabledTrustEvaluator()
         }
-        return .performDefaultEvaluation(validateHost: true)
+        return DefaultTrustEvaluator()
     }
 }
 
-let sharedSession: SessionManager = {
+let sharedSession: Session = {
     let configuration = URLSessionConfiguration.default
-    return SessionManager(
+    return Session(
         configuration: configuration,
-        serverTrustPolicyManager: PlayStationTrustPolicyManager(policies: [:])
+        serverTrustManager: PlayStationTrustManager(allHostsMustBeEvaluated: false, evaluators: [:])
     )
 }()

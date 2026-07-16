@@ -33,8 +33,8 @@ class DownloadManager {
         }
     }
     
-    func getDestination(data: DLItem) -> DownloadRequest.DownloadFileDestination {
-        let destination: DownloadRequest.DownloadFileDestination = { request, response in
+    func getDestination(data: DLItem) -> DownloadRequest.Destination {
+        let destination: DownloadRequest.Destination = { request, response in
             // .pkg filename
             let pathComponent = response.suggestedFilename
                 ?? data.downloadUrl?.lastPathComponent
@@ -90,11 +90,16 @@ class DownloadManager {
     
     func resumeDownload(data: DLItem) {
       if let resumeData = data.resumeData {
-          let request = sharedSession.download(resumingWith: resumeData, to: data.destination)
+          let request = sharedSession.download(resumingWith: resumeData, to: data.destination ?? getDestination(data: data))
 
           data.request = request
           let op = makeConcurrentOperation(dlItem: data, request: request)
           queue.addOperation(op)
+      } else if data.downloadUrl != nil {
+          if let index = downloadItems.firstIndex(of: data) {
+              downloadItems.remove(at: index)
+          }
+          addToDownloadQueue(data: data)
       }
     }
 
@@ -166,6 +171,11 @@ class DownloadManager {
             do {
                 let downloadList = try PropertyListDecoder().decode(DownloadList.self, from: storedData!)
 
+                if downloadList.schemaVersion < DownloadList.currentSchemaVersion {
+                    for item in downloadList.items {
+                        item.resumeData = nil
+                    }
+                }
                 self.downloadItems = downloadList.items
             } catch let error as NSError {
                 debugPrint(error)
@@ -250,17 +260,15 @@ class DownloadManager {
                 NotificationCenter.default.post(name: .downloadProgressChanged, object: nil)
                 }
                 .responseData { response in
-                    response.result.ifSuccess {
-                        dlItem.destinationURL = response.destinationURL
+                    switch response.result {
+                    case .success:
+                        dlItem.destinationURL = response.fileURL
                         self.verifyChecksum(dlItem: dlItem)
-                    }
-                    response.result.ifFailure {
+                    case .failure(let error):
                         defer { NotificationCenter.default.post(name: .downloadQueueChanged, object: nil) }
                         guard let resumeData = response.resumeData else {
-                            dlItem.status = "Failed! \(response.error!)"
-                            if let error = response.error {
-                              log.error(error)
-                            }
+                            dlItem.status = "Failed! \(error)"
+                            log.error(error)
 
                             dlItem.makeRemovable()
                             return

@@ -9,17 +9,8 @@
 // To parse the JSON, add this file to your project and do:
 //
 //   let gHLatestRelease = try? newJSONDecoder().decode(GHLatestRelease.self, from: jsonData)
-//
-// To parse values from Alamofire responses:
-//
-//   Alamofire.request(url).responseGHLatestRelease { response in
-//     if let gHLatestRelease = response.result.value {
-//       ...
-//     }
-//   }
 
 import Foundation
-import Alamofire
 
 struct GHLatestRelease: Codable {
     let url: String
@@ -187,30 +178,4 @@ func newJSONEncoder() -> JSONEncoder {
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
     encoder.dateEncodingStrategy = .formatted(formatter)
     return encoder
-}
-
-// MARK: - Alamofire response handlers
-
-extension DataRequest {
-    fileprivate func decodableResponseSerializer<T: Decodable>() -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, response, data, error in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let data = data else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
-            }
-            
-            return Result { try newJSONDecoder().decode(T.self, from: data) }
-        }
-    }
-    
-    @discardableResult
-    fileprivate func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
-        return response(queue: queue, responseSerializer: decodableResponseSerializer(), completionHandler: completionHandler)
-    }
-    
-    @discardableResult
-    func responseGHLatestRelease(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<GHLatestRelease>) -> Void) -> Self {
-        return responseDecodable(queue: queue, completionHandler: completionHandler)
-    }
 }

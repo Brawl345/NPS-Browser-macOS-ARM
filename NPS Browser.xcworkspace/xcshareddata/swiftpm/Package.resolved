@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "747c8db8d57b68d5e35275f10c92d55f982adbd4",
-        "version" : "4.9.1"
+        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
+        "version" : "5.12.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/AlamofireImage",
       "state" : {
-        "revision" : "c31e617c582102d4b51c714211071f2260e24fdd",
-        "version" : "3.6.0"
+        "revision" : "4cf73d601c482b7d77bae47de3ef1b8bcf328ec1",
+        "version" : "4.4.0"
       }
     },
     {

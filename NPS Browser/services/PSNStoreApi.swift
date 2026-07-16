@@ -44,11 +44,9 @@ class PSNStoreApi {
         let url = getImageURL()
         return Promise<Image> {fulfill, reject in
             sharedSession.request(url)
-                .responseImage { response in
-                    if response.result.isSuccess {
-                        if let image = response.result.value {
-                            fulfill(image)
-                        }
+                .responseData { response in
+                    if case .success(let data) = response.result, let image = Image(data: data) {
+                        fulfill(image)
                     } else {
                         log.info("No image found for \(String(describing: self.item.titleId)) - \(String(describing: self.item.name))")
                         fulfill(#imageLiteral(resourceName: "no-image"))

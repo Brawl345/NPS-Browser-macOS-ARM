@@ -24,9 +24,22 @@ enum DLStatus {
 }
 
 struct DownloadList: Codable {
+    // Bumped to 2 with Alamofire 5: AF4 resume data is incompatible
+    // and gets discarded when restoring a version-1 list
+    static let currentSchemaVersion = 2
+
     var items: [DLItem]
+    var schemaVersion: Int
+
     init(items: [DLItem]) {
         self.items = items
+        self.schemaVersion = Self.currentSchemaVersion
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        items = try container.decode([DLItem].self, forKey: .items)
+        schemaVersion = try container.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
     }
 }
 
@@ -39,11 +52,11 @@ class DLItem: NSObject, Codable {
     @objc dynamic var sha256            : String?
     @objc dynamic var status            : String?
     @objc dynamic var timeRemaining     : TimeInterval = 0
-    var request                         : Alamofire.Request?
+    var request                         : DownloadRequest?
     var resumeData                      : Data?
     var completedBytes                  : Int64 = 0
     var totalBytes                      : Int64 = 0
-    var destination                     : DownloadRequest.DownloadFileDestination?
+    var destination                     : DownloadRequest.Destination?
     @objc dynamic var destinationURL    : URL?
     @objc dynamic var isStoppable      : Bool = false
     @objc dynamic var isViewable        : Bool = false

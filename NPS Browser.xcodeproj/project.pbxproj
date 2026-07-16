@@ -598,10 +598,6 @@
 				CURRENT_PROJECT_VERSION = 72;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/NPS Browser/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
@@ -637,10 +633,6 @@
 				CURRENT_PROJECT_VERSION = 72;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/NPS Browser/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
@@ -693,7 +685,7 @@
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.9.1;
+				minimumVersion = 5.12.0;
 			};
 		};
 		4F46EFE02B705F730059E4AE /* XCRemoteSwiftPackageReference "AlamofireImage" */ = {
@@ -701,7 +693,7 @@
 			repositoryURL = "https://github.com/Alamofire/AlamofireImage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.3.1;
+				minimumVersion = 4.3.0;
 			};
 		};
 		4F46EFE32B705FC30059E4AE /* XCRemoteSwiftPackageReference "SwiftyUserDefaults" */ = {
