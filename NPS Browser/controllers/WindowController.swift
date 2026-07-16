@@ -8,6 +8,7 @@
 
 import Cocoa
 import RealmSwift
+import SwiftyUserDefaults
 
 class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
     @IBOutlet weak var progressSpinner: NSProgressIndicator!
@@ -24,6 +25,7 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
         let vc = self.storyboard?.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("loadingVC")) as! LoadingViewController
         loadingViewController = vc
         self.delegate = getDataController()
+        tbRegion.selectItem(withTag: Defaults[.last_region])
 
         NotificationCenter.default.addObserver(self, selector: #selector(onDownloadStarted), name: .downloadStarted, object: nil)
     }
@@ -44,6 +46,7 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
     }
     
     @IBAction func onRegionChanged(_ sender: Any) {
+        Defaults[.last_region] = tbRegion.selectedItem?.tag ?? 0
         delegate?.filterType(itemType: getItemType(), region: getRegion())
     }
 

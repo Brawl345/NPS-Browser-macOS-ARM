@@ -38,4 +38,6 @@ extension DefaultsKeys {
     static let xt_compression_factor          = DefaultsKey<Int>("xt_compression_factor", defaultValue: 1)
     
     static let dsp_hide_invalid_url_items = DefaultsKey<Bool>("dsp_hide_invalid_url_items", defaultValue: true)
+
+    static let last_region                = DefaultsKey<Int>("last_region", defaultValue: 0)
 }
