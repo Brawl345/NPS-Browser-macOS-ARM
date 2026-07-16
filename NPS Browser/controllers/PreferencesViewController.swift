@@ -135,8 +135,8 @@ class PreferencesViewController: NSViewController {
             if result == NSApplication.ModalResponse.OK {
                 self.dlLocation = panel.urls[0]
                 self.dlPathField.stringValue = self.dlLocation?.path ?? ""
-                Defaults[.dl_library_location] = self.dlLocation!.absoluteURL
-                Defaults[.dl_library_folder]   = self.dlLocation!.absoluteURL
+                Defaults[.dl_library_location] = self.dlLocation!.asFileURL
+                Defaults[.dl_library_folder]   = self.dlLocation!.asFileURL
                 Helpers.setupDownloadsDirectory()
             }
         }
@@ -153,8 +153,8 @@ class PreferencesViewController: NSViewController {
             if result == NSApplication.ModalResponse.OK {
                 self.xtLocation = panel.urls[0]
                 self.chkXTField.stringValue = self.xtLocation?.path ?? ""
-                Defaults[.xt_library_location] = self.xtLocation!.absoluteURL
-                Defaults[.xt_library_folder]   = self.xtLocation!.absoluteURL
+                Defaults[.xt_library_location] = self.xtLocation!.asFileURL
+                Defaults[.xt_library_folder]   = self.xtLocation!.asFileURL
                 Helpers.setupDownloadsDirectory()
             }
         }
@@ -230,12 +230,12 @@ class PreferencesViewController: NSViewController {
             try validateAndStore(urlString: compatPackField.stringValue, endsWith: "txt", defaultsKey: .src_compatPacks)
             try validateAndStore(urlString: compatPatchField.stringValue, endsWith: "txt", defaultsKey: .src_compatPatch)
 
-            Defaults[.dl_library_location]      = self.dlLocation!.absoluteURL
-            Defaults[.dl_library_folder]        = self.dlLocation!.absoluteURL
+            Defaults[.dl_library_location]      = self.dlLocation!.asFileURL
+            Defaults[.dl_library_folder]        = self.dlLocation!.asFileURL
             Defaults[.dl_concurrent_downloads]  = ccDLField.integerValue
 
-            Defaults[.xt_library_location]          = self.xtLocation!.absoluteURL
-            Defaults[.xt_library_folder]            = self.xtLocation!.absoluteURL
+            Defaults[.xt_library_location]          = self.xtLocation!.asFileURL
+            Defaults[.xt_library_folder]            = self.xtLocation!.asFileURL
             Defaults[.xt_extract_after_downloading] = chkExtractPKG.state == .on
             Defaults[.xt_keep_pkg]                  = chkKeepPKG.state == .on
             Defaults[.xt_save_as_zip]               = chkSaveZip.state == .on

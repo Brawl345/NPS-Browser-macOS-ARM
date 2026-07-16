@@ -10,13 +10,20 @@ import Cocoa
 import Foundation
 import SwiftyUserDefaults
 
+extension URL {
+    // Legacy defaults may contain archived NSURLs without a file:// scheme
+    var asFileURL: URL {
+        isFileURL ? self : URL(fileURLWithPath: path)
+    }
+}
+
 class Helpers {
 
     static func setupDownloadsDirectory() {
         let fileManager = FileManager.default
         let fallback = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
         let dlDirName = "NPS Downloads"
-        let base = Defaults[.dl_library_location] ?? fallback
+        let base = (Defaults[.dl_library_location] ?? fallback).asFileURL
 
         do {
             try fileManager.createDirectory(at: base.appendingPathComponent(dlDirName, isDirectory: true),

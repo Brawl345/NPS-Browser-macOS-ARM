@@ -48,7 +48,7 @@ class ExtractionManager {
     }
     
     func unzipPPK() {
-        var filepath = Defaults[.xt_library_folder]
+        var filepath = Defaults[.xt_library_folder]?.asFileURL
         let rpf = makeRepatchFolder(filepath: filepath!)
         filepath = rpf.appendingPathComponent("\(item.titleId!)")
         
@@ -89,7 +89,7 @@ class ExtractionManager {
 
         guard let pkg2zipPath = Bundle.main.path(forResource: "pkg2zip", ofType: nil),
               let consoleType = item.consoleType,
-              let workingDirectory = Defaults[.xt_library_folder]?.appendingPathComponent(consoleType) else {
+              let workingDirectory = Defaults[.xt_library_folder]?.asFileURL.appendingPathComponent(consoleType) else {
             log.error("pkg2zip not found or extraction folder not configured")
             completeDownload(status: DLStatus.extractionFailed)
             return

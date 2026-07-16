@@ -40,7 +40,7 @@ class DownloadManager {
                 ?? data.downloadUrl?.lastPathComponent
                 ?? "download.pkg"
 
-            var path: URL = Defaults[.dl_library_folder]
+            var path: URL = Defaults[.dl_library_folder]?.asFileURL
                 ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads")
 
             if let cf = data.consoleType {
@@ -58,7 +58,7 @@ class DownloadManager {
     func makeConsoleFolder(dlItem: DLItem) {
         guard let console = dlItem.consoleType else { return }
 
-        let base = Defaults[.dl_library_folder]
+        let base = Defaults[.dl_library_folder]?.asFileURL
             ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
         let target = base.appendingPathComponent(console, isDirectory: true)
 

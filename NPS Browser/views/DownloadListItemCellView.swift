@@ -13,7 +13,7 @@ class DownloadListItemCellView: NSTableCellView {
 
     @IBOutlet weak var btnAction: NSButton!
     var item: DLItem?
-    var dlLoc = Defaults[.dl_library_folder]
+    var dlLoc = Defaults[.dl_library_folder]?.asFileURL
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
