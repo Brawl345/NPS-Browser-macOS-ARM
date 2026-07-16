@@ -6,8 +6,9 @@
 import Cocoa
 
 extension Notification.Name {
-    static let downloadQueueChanged = Notification.Name("downloadQueueChanged")
-    static let downloadStarted     = Notification.Name("downloadStarted")
+    static let downloadQueueChanged   = Notification.Name("downloadQueueChanged")
+    static let downloadStarted        = Notification.Name("downloadStarted")
+    static let downloadProgressChanged = Notification.Name("downloadProgressChanged")
 }
 
 class DownloadViewController: NSViewController {

@@ -112,6 +112,28 @@ class DownloadManager {
     func getObjectQueue() -> [DLItem] {
         return self.downloadItems
     }
+
+    private static let activeStatuses: Set<String> = [
+        DLStatus.queued, DLStatus.waiting, DLStatus.downloading,
+        DLStatus.verifying, DLStatus.extracting
+    ]
+
+    // Byte-weighted progress across all active items; verification and
+    // extraction keep an item active so the aggregate only completes
+    // once post-processing is done
+    func overallProgress() -> (fraction: Double, activeCount: Int) {
+        let active = downloadItems.filter { Self.activeStatuses.contains($0.status ?? "") }
+        guard !active.isEmpty else { return (0, 0) }
+
+        let knownTotal = active.reduce(Int64(0)) { $0 + max($1.totalBytes, 0) }
+        if knownTotal > 0 {
+            let completed = active.reduce(Int64(0)) { $0 + max(min($1.completedBytes, $1.totalBytes), 0) }
+            return (Double(completed) / Double(knownTotal), active.count)
+        }
+
+        let mean = active.reduce(0.0) { $0 + $1.progress / 100.0 } / Double(active.count)
+        return (mean, active.count)
+    }
     
     func stopAndStoreDownloadList() {
         for item in downloadItems {
@@ -223,6 +245,9 @@ class DownloadManager {
                 }
                 dlItem.progress = (progress.fractionCompleted * 100).rounded()
                 dlItem.timeRemaining = progress.fractionCompleted
+                dlItem.completedBytes = progress.completedUnitCount
+                dlItem.totalBytes = progress.totalUnitCount
+                NotificationCenter.default.post(name: .downloadProgressChanged, object: nil)
                 }
                 .responseData { response in
                     response.result.ifSuccess {

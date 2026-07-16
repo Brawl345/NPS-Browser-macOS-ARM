@@ -41,6 +41,8 @@ class DLItem: NSObject, Codable {
     @objc dynamic var timeRemaining     : TimeInterval = 0
     var request                         : Alamofire.Request?
     var resumeData                      : Data?
+    var completedBytes                  : Int64 = 0
+    var totalBytes                      : Int64 = 0
     var destination                     : DownloadRequest.DownloadFileDestination?
     @objc dynamic var destinationURL    : URL?
     @objc dynamic var isStoppable      : Bool = false

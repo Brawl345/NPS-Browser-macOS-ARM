@@ -26,6 +26,7 @@
 		515F58F522C663D2003370DA /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515F58F422C663D2003370DA /* Files.swift */; };
 		516019E82131D65300BD7B0C /* DBMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516019E72131D65300BD7B0C /* DBMigration.swift */; };
 		5167430520AFE098003AFC4D /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5167430420AFE098003AFC4D /* DownloadManager.swift */; };
+		AB12CD3400000002000000AA /* DockProgressController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12CD3400000001000000AA /* DockProgressController.swift */; };
 		516A1B7720CAE276004D6AE5 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 516A1B7620CAE275004D6AE5 /* CHANGELOG.md */; };
 		516A1B7920CAE28A004D6AE5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 516A1B7820CAE28A004D6AE5 /* README.md */; };
 		5177A78620C33C0F002F81F9 /* pkg2zip in Resources */ = {isa = PBXBuildFile; fileRef = 5177A78520C33C0E002F81F9 /* pkg2zip */; };
@@ -78,6 +79,7 @@
 		515F58F422C663D2003370DA /* Files.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		516019E72131D65300BD7B0C /* DBMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBMigration.swift; sourceTree = "<group>"; };
 		5167430420AFE098003AFC4D /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		AB12CD3400000001000000AA /* DockProgressController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockProgressController.swift; sourceTree = "<group>"; };
 		516A1B7620CAE275004D6AE5 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		516A1B7820CAE28A004D6AE5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5177A78520C33C0E002F81F9 /* pkg2zip */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = pkg2zip; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 		516B855220AE7FE800E4A083 /* services */ = {
 			isa = PBXGroup;
 			children = (
+				AB12CD3400000001000000AA /* DockProgressController.swift */,
 				5167430420AFE098003AFC4D /* DownloadManager.swift */,
 				5177A78720C3508D002F81F9 /* ExtractionManager.swift */,
 				518C72EA20C4153B0022375E /* Helpers.swift */,
@@ -397,6 +400,7 @@
 				518C72EB20C4153B0022375E /* Helpers.swift in Sources */,
 				518F8D8721270AB9005530C6 /* GHLatestRelease.swift in Sources */,
 				5167430520AFE098003AFC4D /* DownloadManager.swift in Sources */,
+				AB12CD3400000002000000AA /* DockProgressController.swift in Sources */,
 				519F0D7520CCBFDA00332987 /* BookmarksViewController.swift in Sources */,
 				5192CE81211E219D004A2E90 /* CompatPack.swift in Sources */,
 				51E6684D2121447600FC154A /* AppUpdateChecker.swift in Sources */,

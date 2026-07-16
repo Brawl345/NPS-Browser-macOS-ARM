@@ -18,12 +18,14 @@ let log = SwiftyBeaver.self
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
 
     lazy var downloadManager: DownloadManager = DownloadManager()
+    private var dockProgressController: DockProgressController?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         setupSwiftyBeaverLogging()
         migrateSourceURLsToHTTPS()
         setupNotifications()
+        dockProgressController = DockProgressController(downloadManager: downloadManager)
     }
 
     func setupNotifications() {
