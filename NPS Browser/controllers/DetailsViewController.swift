@@ -7,17 +7,17 @@
 //
 
 import Cocoa
-import Promises
 
 class DetailsViewController: NSViewController {
-    
+
     @IBOutlet weak var chkBookmark: NSButton!
     @IBOutlet weak var btnDownload: NSButton!
     @IBOutlet weak var chkDLGame: NSButton!
     @IBOutlet weak var chkDLUpdate: NSButton!
     @IBOutlet weak var chkDLCompatPack: NSButton!
-    
+
     var windowDelegate: WindowDelegate?
+    private var pendingUpdateCheck: DispatchWorkItem?
 
     override var representedObject: Any? {
         didSet {
@@ -39,30 +39,8 @@ class DetailsViewController: NSViewController {
             self.sendDLData(url: url!, fileType: .Game)
         }
         if (chkDLUpdate.state == .on && chkDLUpdate.isEnabled && chkDLUpdate.isHidden == false) {
-            let networkManager = NetworkManager()
-            let titleId = getROManagedObject().titleId!
-
-            DispatchQueue.global(qos: .userInitiated).async {
-                let url = networkManager.getUpdateXMLURLFromHMAC(titleId: titleId)
-
-                DispatchQueue.main.async {
-                    guard let url = url else {
-                        Helpers().makeAlert(messageText: "Update not available",
-                                            informativeText: "The update link could not be determined.",
-                                            alertStyle: .warning)
-                        return
-                    }
-
-                    let pxml = networkManager.fetchUpdateXML(url: url)
-                    pxml().then { res in
-                        self.sendDLData(url: res, fileType: .Update)
-                    }.catch { error in
-                        log.error(error)
-                        Helpers().makeAlert(messageText: "Update not available",
-                                            informativeText: error.localizedDescription,
-                                            alertStyle: .warning)
-                    }
-                }
+            if let url = GameUpdateService.shared.cachedUpdateURL(titleId: obj.titleId!) {
+                sendDLData(url: url, fileType: .Update)
             }
         }
         if (chkDLCompatPack.state == .on && chkDLCompatPack.isEnabled && chkDLCompatPack.isHidden == false) {
@@ -137,8 +115,7 @@ class DetailsViewController: NSViewController {
                 let titleId = getROManagedObject().titleId
                 chkDLCompatPack.title = "CPack"
                 chkDLGame.isEnabled = true
-                chkDLUpdate.isEnabled = true
-                chkDLUpdate.isHidden = false
+                configureUpdateCheckbox(titleId: titleId!)
                 chkDLCompatPack.isHidden = false
                 
                 try! RealmStorageContext().fetch(CompatPack.self, predicate: NSPredicate(format: "titleId == %@", titleId!)) { result in
@@ -171,6 +148,42 @@ class DetailsViewController: NSViewController {
         }
     }
     
+    private func configureUpdateCheckbox(titleId: String) {
+        pendingUpdateCheck?.cancel()
+        chkDLUpdate.isHidden = false
+        chkDLUpdate.isEnabled = false
+
+        if let cached = GameUpdateService.shared.cachedAvailability(titleId: titleId) {
+            applyUpdateAvailability(cached)
+            return
+        }
+        chkDLUpdate.toolTip = "Checking for update…"
+
+        // Debounced so arrow-key scrolling through the list doesn't fire
+        // a request against Sony's update server for every row passed
+        let work = DispatchWorkItem { [weak self] in
+            GameUpdateService.shared.checkAvailability(titleId: titleId) { availability in
+                guard let self = self,
+                      (self.representedObject as? Item)?.titleId == titleId else { return }
+                self.applyUpdateAvailability(availability)
+            }
+        }
+        pendingUpdateCheck = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: work)
+    }
+
+    private func applyUpdateAvailability(_ availability: GameUpdateService.Availability?) {
+        switch availability {
+        case .available?:
+            chkDLUpdate.isEnabled = true
+            chkDLUpdate.toolTip = nil
+        case .unavailable?:
+            chkDLUpdate.toolTip = "No update available"
+        case nil:
+            chkDLUpdate.toolTip = "Update check failed"
+        }
+    }
+
     func toggleBookmark() {
         let predicate = NSPredicate(format: "uuid == %@", getROManagedObject().pk)
         let bookmark = DBManager().fetch(Bookmark.self, predicate: predicate)

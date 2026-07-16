@@ -53,7 +53,12 @@ class Parser {
     func parseUpdateXML(data: String) -> URL? {
         let xml = data
         var x: String = ""
-        
+
+        // Titles without an update return an empty body
+        if xml.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return nil
+        }
+
         do {
             let document = try XMLDocument(string: xml)
             

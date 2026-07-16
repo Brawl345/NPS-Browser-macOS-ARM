@@ -12,13 +12,63 @@ import Promises
 import Alamofire
 import SwiftyUserDefaults
 
-enum NetworkError: LocalizedError {
-    case invalidUpdateXML
+final class GameUpdateService {
+    static let shared = GameUpdateService()
 
-    var errorDescription: String? {
-        switch self {
-        case .invalidUpdateXML: return "The update XML could not be parsed."
+    enum Availability {
+        case available(URL)
+        case unavailable
+    }
+
+    // Main-thread only: filled and read from Alamofire's main-queue completions
+    private var cache: [String: Availability] = [:]
+
+    func cachedAvailability(titleId: String) -> Availability? {
+        return cache[titleId]
+    }
+
+    func cachedUpdateURL(titleId: String) -> URL? {
+        if case .available(let url)? = cache[titleId] {
+            return url
         }
+        return nil
+    }
+
+    func checkAvailability(titleId: String, completion: @escaping (Availability?) -> Void) {
+        if let cached = cache[titleId] {
+            completion(cached)
+            return
+        }
+
+        sharedSession.request(Self.updateXMLURL(titleId: titleId))
+            .responseString { [weak self] response in
+                switch response.result {
+                case .success(let body):
+                    let availability: Availability
+                    if let url = Parser().parseUpdateXML(data: body) {
+                        availability = .available(url)
+                    } else {
+                        availability = .unavailable
+                    }
+                    self?.cache[titleId] = availability
+                    completion(availability)
+                case .failure(let error):
+                    log.error(error)
+                    completion(nil)
+                }
+            }
+    }
+
+    private static func updateXMLURL(titleId: String) -> String {
+        let key = SymmetricKey(data: Data([
+            0xE5, 0xE2, 0x78, 0xAA, 0x1E, 0xE3, 0x40, 0x82, 0xA0, 0x88, 0x27, 0x9C, 0x83, 0xF9, 0xBB, 0xC8,
+            0x06, 0x82, 0x1C, 0x52, 0xF2, 0xAB, 0x5D, 0x2B, 0x4A, 0xBD, 0x99, 0x54, 0x50, 0x35, 0x51, 0x14
+        ]))
+
+        let hmac = HMAC<SHA256>.authenticationCode(for: Data("np_\(titleId)".utf8), using: key)
+        let hash = hmac.map { String(format: "%02x", $0) }.joined()
+
+        return "https://gs-sec.ww.np.dl.playstation.net/pl/np/\(titleId)/\(hash)/\(titleId)-ver.xml"
     }
 }
 
@@ -206,40 +256,4 @@ class NetworkManager {
         }
     }
 
-    func getUpdateXMLURLFromHMAC(titleId: String) -> String? {
-        let key = SymmetricKey(data: Data([
-            0xE5, 0xE2, 0x78, 0xAA, 0x1E, 0xE3, 0x40, 0x82, 0xA0, 0x88, 0x27, 0x9C, 0x83, 0xF9, 0xBB, 0xC8,
-            0x06, 0x82, 0x1C, 0x52, 0xF2, 0xAB, 0x5D, 0x2B, 0x4A, 0xBD, 0x99, 0x54, 0x50, 0x35, 0x51, 0x14
-        ]))
-
-        let hmac = HMAC<SHA256>.authenticationCode(for: Data("np_\(titleId)".utf8), using: key)
-        let hash = hmac.map { String(format: "%02x", $0) }.joined()
-
-        return "https://gs-sec.ww.np.dl.playstation.net/pl/np/\(titleId)/\(hash)/\(titleId)-ver.xml"
-    }
-
-    func fetchUpdateXML(url: String) -> (() -> (Promise<URL>)) {
-
-        log.debug(url)
-
-        return {
-                Promise<URL> { fulfill, reject in
-                sharedSession.request(url)
-                    .responseString { response in
-                        switch response.result {
-                        case .success(let data):
-                            if let updateurl = Parser().parseUpdateXML(data: data) {
-                                fulfill(updateurl)
-                            } else {
-                                reject(NetworkError.invalidUpdateXML)
-                            }
-                        case .failure(let error):
-                            reject(error)
-                        }
-                }
-            }
-        }
-
-    }
-    
 }
