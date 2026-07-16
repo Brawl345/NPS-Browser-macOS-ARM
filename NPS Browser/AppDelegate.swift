@@ -25,9 +25,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         setupSwiftyBeaverLogging()
         Helpers.restoreFolderAccess(key: .dl_library_bookmark)
         Helpers.restoreFolderAccess(key: .xt_library_bookmark)
+        promptForLibraryFolderIfNeeded()
         migrateSourceURLsToHTTPS()
         setupNotifications()
         dockProgressController = DockProgressController(downloadManager: downloadManager)
+    }
+
+    func promptForLibraryFolderIfNeeded() {
+        guard Defaults[.dl_library_bookmark] == nil else { return }
+
+        let panel = NSOpenPanel()
+        panel.message = "Choose a folder where NPS Browser saves downloads and extracted files."
+        panel.prompt = "Choose"
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+
+        guard panel.runModal() == .OK, let url = panel.urls.first else { return }
+
+        Defaults[.dl_library_location] = url
+        Defaults[.dl_library_folder] = url
+        Helpers.storeFolderBookmark(url: url, key: .dl_library_bookmark)
+
+        if Defaults[.xt_library_bookmark] == nil {
+            Defaults[.xt_library_location] = url
+            Defaults[.xt_library_folder] = url
+            Helpers.storeFolderBookmark(url: url, key: .xt_library_bookmark)
+        }
     }
 
     func setupNotifications() {
