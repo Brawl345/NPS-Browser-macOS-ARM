@@ -23,27 +23,7 @@ enum DLStatus {
     static let checksumMismatch     = "Failed! Checksum mismatch"
 }
 
-struct DownloadList: Codable {
-    // Bumped to 2 with Alamofire 5: AF4 resume data is incompatible
-    // and gets discarded when restoring a version-1 list
-    static let currentSchemaVersion = 2
-
-    var items: [DLItem]
-    var schemaVersion: Int
-
-    init(items: [DLItem]) {
-        self.items = items
-        self.schemaVersion = Self.currentSchemaVersion
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        items = try container.decode([DLItem].self, forKey: .items)
-        schemaVersion = try container.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
-    }
-}
-
-class DLItem: NSObject, Codable {
+class DLItem: NSObject {
     @objc dynamic var titleId          : String?
     @objc dynamic var name              : String?
     @objc dynamic var downloadUrl     : URL?
@@ -68,33 +48,7 @@ class DLItem: NSObject, Codable {
     @objc dynamic var consoleType       : String?
     @objc dynamic var fileType          : String?
     @objc dynamic var actionImage: NSImage?
-    
-    enum CodingKeys: String, CodingKey {
-        case titleId
-        case name
-        case downloadUrl
-        case progress
-        case zrif
-        case sha256
-        case status
-        case timeRemaining
-        case resumeData
-        case destinationURL
-        case isStoppable
-        case isViewable
-        case isRemovable
-        case isResumable
-        case cpackPath
-        case doNext
-        case parentItem
-        case consoleType
-        case fileType
-    }
-    
-    override init() {
-        super.init()
-    }
-    
+
     func isMore() -> Bool {
         return doNext != nil
     }

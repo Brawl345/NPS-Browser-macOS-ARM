@@ -20,7 +20,7 @@ class DownloadManager {
     private var defaultsObserver: NSObjectProtocol?
 
     init() {
-        restoreDownloadList()
+        UserDefaults.standard.removeObject(forKey: "downloads")
 
         defaultsObserver = NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification,
                                                                   object: nil,
@@ -140,49 +140,11 @@ class DownloadManager {
         return (mean, active.count)
     }
     
-    func stopAndStoreDownloadList() {
+    func cancelActiveDownloads() {
         for item in downloadItems {
-            
-            if (item.status == DLStatus.downloadComplete || item.status == DLStatus.extractionComplete || item.status == DLStatus.missingZrif) {
-                item.makeViewable()
-            } else {
-                item.request?.cancel()
-                item.status = DLStatus.stopped
-                item.makeResumable()
-            }
+            item.request?.cancel()
         }
-        let downloadList: DownloadList = DownloadList(items: downloadItems)
-        
-        do {
-            let data = try PropertyListEncoder().encode(downloadList)
-            UserDefaults.standard.set(data, forKey: "downloads")
-        } catch {
-            Helpers().makeAlert(messageText: "Save Failed",
-                                informativeText: "Download list could not be stored.",
-                                alertStyle: .warning)
-            
-            log.error("Save Failed. Download list could not be stored.")
-        }
-    }
-    
-    func restoreDownloadList() {
-        let storedData = UserDefaults.standard.object(forKey: "downloads") as? Data
-        if (storedData != nil) {
-            do {
-                let downloadList = try PropertyListDecoder().decode(DownloadList.self, from: storedData!)
-
-                if downloadList.schemaVersion < DownloadList.currentSchemaVersion {
-                    for item in downloadList.items {
-                        item.resumeData = nil
-                    }
-                }
-                self.downloadItems = downloadList.items
-            } catch let error as NSError {
-                debugPrint(error)
-                
-                log.error(error)
-            }
-        }
+        downloadItems.removeAll()
     }
 
     private func verifyChecksum(dlItem: DLItem) {
