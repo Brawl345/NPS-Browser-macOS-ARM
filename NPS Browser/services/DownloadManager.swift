@@ -215,11 +215,14 @@ class DownloadManager {
             dlItem.status = DLStatus.queued
             
             request.downloadProgress { progress in
-                dlItem.status = DLStatus.downloading
-                dlItem.makeStoppable()
+                // Row UI is KVO-bound; posting .downloadQueueChanged here would
+                // reload the table every tick and make reused cells flicker
+                if dlItem.status != DLStatus.downloading {
+                    dlItem.status = DLStatus.downloading
+                    dlItem.makeStoppable()
+                }
                 dlItem.progress = (progress.fractionCompleted * 100).rounded()
                 dlItem.timeRemaining = progress.fractionCompleted
-                NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
                 }
                 .responseData { response in
                     response.result.ifSuccess {
@@ -227,6 +230,7 @@ class DownloadManager {
                         self.verifyChecksum(dlItem: dlItem)
                     }
                     response.result.ifFailure {
+                        defer { NotificationCenter.default.post(name: .downloadQueueChanged, object: nil) }
                         guard let resumeData = response.resumeData else {
                             dlItem.status = "Failed! \(response.error!)"
                             if let error = response.error {
