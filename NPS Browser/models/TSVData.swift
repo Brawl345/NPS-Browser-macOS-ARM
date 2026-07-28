@@ -60,15 +60,11 @@ struct TSVData {
             default: break
             }
         case .PS3:
-            let baseURL = "https://nopaystation.com/tools/rap2file"
             name                      = col(2)
             pkgDirectLink             = col(3)
             rap                       = col(4)
             contentId                 = col(5)
             lastModificationDate      = parseDate(dateString: col(6))
-            if let contentId = col(5), let rap = col(4) {
-                downloadRapFile       = "\(baseURL)/\(contentId)/\(rap)"
-            }
             fileSize                  = Int64(col(8) ?? "")
             sha256                    = col(9)
         case .PSP:

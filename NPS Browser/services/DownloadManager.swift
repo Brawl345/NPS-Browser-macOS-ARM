@@ -88,6 +88,57 @@ class DownloadManager {
         self.queue.addOperation(dlFileOperation)
     }
     
+    // PS3 RAP licenses are just the 16-byte key stored as a 32-char hex
+    // string in the TSV, so the file is written locally instead of fetched
+    func generateRapFile(data: Item) {
+        guard let rap = data.rap, let bytes = DownloadManager.rapData(fromHex: rap) else {
+            log.error("Invalid RAP data for \(data.titleId ?? "unknown")")
+            Helpers().makeAlert(messageText: "Could not create RAP",
+                                informativeText: "The license data for this title is not a valid RAP.")
+            return
+        }
+
+        let console = data.consoleType ?? "PS3"
+        let fileName = "\(data.contentId ?? data.titleId ?? "license").rap"
+        let base = Defaults[.dl_library_folder]?.asFileURL
+            ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Downloads", isDirectory: true)
+        let folder = base.appendingPathComponent(console, isDirectory: true)
+        let fileURL = folder.appendingPathComponent(fileName)
+
+        let dlItem = Helpers().makeDLItem(data: data, downloadUrl: fileURL, fileType: .RAP)
+        downloadItems.insert(dlItem, at: 0)
+        NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
+
+        do {
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try bytes.write(to: fileURL, options: .atomic)
+            dlItem.destinationURL = fileURL
+            dlItem.status = DLStatus.downloadComplete
+            dlItem.makeViewable()
+            Helpers().makeNotification(title: dlItem.name!, subtitle: dlItem.status!)
+        } catch {
+            log.error("Could not write RAP file at \(fileURL.path): \(error)")
+            dlItem.status = "Failed! \(error.localizedDescription)"
+            dlItem.makeRemovable()
+        }
+        NotificationCenter.default.post(name: .downloadQueueChanged, object: nil)
+    }
+
+    static func rapData(fromHex hex: String) -> Data? {
+        let cleaned = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard cleaned.count == 32, cleaned.allSatisfy({ $0.isHexDigit }) else { return nil }
+
+        var data = Data(capacity: 16)
+        var index = cleaned.startIndex
+        while index < cleaned.endIndex {
+            let next = cleaned.index(index, offsetBy: 2)
+            guard let byte = UInt8(cleaned[index..<next], radix: 16) else { return nil }
+            data.append(byte)
+            index = next
+        }
+        return data
+    }
+
     func resumeDownload(data: DLItem) {
       if let resumeData = data.resumeData {
           let request = sharedSession.download(resumingWith: resumeData, to: data.destination ?? getDestination(data: data))

@@ -49,8 +49,7 @@ class DetailsViewController: NSViewController {
             let ft: FileType = FileType(rawValue: obj.fileType!)!
             switch(ct) {
             case .PS3:
-                let url = URL(string: obj.downloadRapFile!)
-                sendDLData(url: url!, fileType: .RAP)
+                Helpers().getSharedAppDelegate().downloadManager.generateRapFile(data: obj)
             case .PSV:
                 switch(ft) {
                 case .Game:
