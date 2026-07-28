@@ -3,7 +3,7 @@
 A Swift 5 implementation of NPS Browser.\
 **Tested and working on macOS 14.7.7**
 
-Additionally, this fork fixes the download & bookmarks panels and ships native arm64 binaries for pkg2zip and vitanpupdatelinks.
+This fork fixes a lot of issues and bugs like the download & bookmarks panels and replaces pkg2zip and vitanpupdatelinks with native code.
 
 ![](/Screenshots/main.png?raw=true)
 

@@ -3,15 +3,20 @@
 ## v1.4.9
 ### Added
 - Download panel opens automatically after a download is started
+- Enable App Sandbox
+- Verify SHA256 checksums
 
 ### Changed
-- Ship [pkg2zip](https://github.com/Brawl345/pkg2zip) and [vitanpupdatelinks](https://github.com/Brawl345/vitanpupdatelinks) forks compiled for arm64
+- Replace pkg2zip and vitanpupdatelinks with native code but you can find ARM64-compatible forks here: [pkg2zip](https://github.com/Brawl345/pkg2zip), [vitanpupdatelinks](https://github.com/Brawl345/vitanpupdatelinks)
+- Cart-only games get hidden
 
 ### Fixed
 - Download and bookmarks panel work again
 - Extraction doesn't freeze the app anymore
 - Download ignores untrusted certificates such as Sony's
 - Does not freeze/loop/crash anymore when TSV files are unparsable or server is unreachable
+- Fix thousands of other bugs and improved performance
+- Update dependencies
 
 ## v1.4.8
 ### Added
