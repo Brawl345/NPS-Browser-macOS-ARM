@@ -80,6 +80,7 @@ class DownloadListItemCellView: NSTableCellView {
                 location.appendPathComponent("pspemu")
             case .PS3:
                 location = dlFolder.appendingPathComponent(consoleType, isDirectory: true)
+            case .All: break
             }
         }
 

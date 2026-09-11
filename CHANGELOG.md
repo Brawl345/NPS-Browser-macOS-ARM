@@ -5,6 +5,9 @@
 - Download panel opens automatically after a download is started
 - Enable App Sandbox
 - Verify SHA256 checksums
+- "ANY" entry in the region menu shows all regions
+- "ANY" entries in the type menu show all types, either for one console or for all of them, with a "Type" column next to "Region"
+- All sources are downloaded on start when their data is missing or older than a day
 
 ### Changed
 - Replace pkg2zip and vitanpupdatelinks with native code but you can find ARM64-compatible forks here: [pkg2zip](https://github.com/Brawl345/pkg2zip), [vitanpupdatelinks](https://github.com/Brawl345/vitanpupdatelinks)
@@ -15,6 +18,8 @@
 - Extraction doesn't freeze the app anymore
 - Download ignores untrusted certificates such as Sony's
 - Does not freeze/loop/crash anymore when TSV files are unparsable or server is unreachable
+- Titles with Japanese characters are displayed correctly
+- Region and type menus keep the search term
 - Fix thousands of other bugs and improved performance
 - Update dependencies
 

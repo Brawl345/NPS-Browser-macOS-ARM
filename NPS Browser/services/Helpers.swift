@@ -162,6 +162,7 @@ class Helpers {
             }
         case .PSP: return Defaults[.src_psp_games]
         case .PSX: return Defaults[.src_psx_games]
+        case .All: return nil
         }
         
         return nil

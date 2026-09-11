@@ -52,6 +52,10 @@ class Item: Object {
         return pkgDirectLink?.hasPrefix("http") == true
     }
 
+    var typeLabel: String {
+        return "\(consoleType ?? "") \(fileType ?? "")"
+    }
+
     override static func primaryKey() -> String {
         return Item.Property.uuid.rawValue
     }

@@ -39,5 +39,5 @@ extension DefaultsKeys {
     
     static let dsp_hide_invalid_url_items = DefaultsKey<Bool>("dsp_hide_invalid_url_items", defaultValue: true)
 
-    static let last_region                = DefaultsKey<Int>("last_region", defaultValue: 0)
+    static let last_region                = DefaultsKey<Int>("last_region", defaultValue: 4)
 }

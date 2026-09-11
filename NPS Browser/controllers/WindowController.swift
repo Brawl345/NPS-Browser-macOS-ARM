@@ -42,26 +42,20 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
     }
     
     @IBAction func onTypeChanged(_ sender: Any) {
-        delegate?.filterType(itemType: getItemType(), region: getRegion())
+        delegate?.applyFilter()
     }
-    
+
     @IBAction func onRegionChanged(_ sender: Any) {
         Defaults[.last_region] = tbRegion.selectedItem?.tag ?? 0
-        delegate?.filterType(itemType: getItemType(), region: getRegion())
+        delegate?.applyFilter()
     }
 
     @IBAction func onFilterSearchBar(_ sender: NSSearchField) {
-        let searchString = tbSearchBar.stringValue
-        
-        if (!searchString.isEmpty) {
-            delegate?.filterString(itemType: getItemType(), region: getRegion(), searchString: searchString)
-        } else {
-            delegate?.filterType(itemType: getItemType(), region: getRegion())
-        }
+        delegate?.applyFilter()
     }
     
     @IBAction func reloadDatabase(_ sender: NSMenuItem) {
-        NetworkManager().makeRequest()
+        NetworkManager().refreshAll(force: true)
     }
 
     func getDataController() -> DataViewController {
@@ -78,6 +72,10 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
         return ItemType.parseString((tbType.selectedItem?.title)!, ItemType.getTypeFromTag(tbType.selectedItem?.tag ?? 0))
     }
     
+    func getSearchString() -> String {
+        return tbSearchBar.stringValue
+    }
+
     func getRegion() -> String {
         let tag = tbRegion.selectedItem?.tag
         switch (tag) {
@@ -89,6 +87,8 @@ class WindowController: NSWindowController, NSToolbarDelegate, WindowDelegate {
             return "JP"
         case 3:
             return "ASIA"
+        case 4:
+            return "ANY"
         default:
             return "US"
         }

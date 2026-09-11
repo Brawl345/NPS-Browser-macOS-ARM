@@ -10,6 +10,7 @@ import Foundation
 import CryptoKit
 import Promises
 import Alamofire
+import RealmSwift
 import SwiftyUserDefaults
 
 final class GameUpdateService {
@@ -41,7 +42,7 @@ final class GameUpdateService {
         }
 
         sharedSession.request(Self.updateXMLURL(titleId: titleId))
-            .responseString { [weak self] response in
+            .responseString(encoding: .utf8) { [weak self] response in
                 switch response.result {
                 case .success(let body):
                     let availability: Availability
@@ -75,185 +76,158 @@ final class GameUpdateService {
 class NetworkManager {
 
     let windowDelegate: WindowDelegate = Helpers().getWindowDelegate()
-    
-    let itemType = Helpers().getWindowDelegate().getItemType()
 
-    func makeRequest() {
-        guard let url = Helpers().getUrlSettingsByType(itemType: itemType) else {
-            Helpers().makeAlert(messageText: "No URL set for \(self.itemType.console.rawValue) \(self.itemType.fileType.rawValue)s.", informativeText: "Set source paths in the preferences window.", alertStyle: .warning)
+    private static let refreshInterval: TimeInterval = 24 * 60 * 60
+    private static let parallelDownloads = 3
+    private static var isRefreshing = false
 
-            log.error("Invalid URL given for item type: \(itemType.description)")
+    static func lastRefreshKey(_ itemType: ItemType) -> DefaultsKey<Date?> {
+        return DefaultsKey<Date?>("refresh_\(itemType.console.rawValue)_\(itemType.fileType.rawValue)")
+    }
+
+    private func isOutdated(_ itemType: ItemType) -> Bool {
+        guard let last = Defaults[NetworkManager.lastRefreshKey(itemType)] else { return true }
+        return Date().timeIntervalSince(last) > NetworkManager.refreshInterval
+    }
+
+    private func hasStoredItems(_ itemType: ItemType) -> Bool {
+        let predicate = NSPredicate(format: "consoleType == %@ AND fileType == %@",
+                                    itemType.console.rawValue, itemType.fileType.rawValue)
+        return try! Realm().objects(Item.self).filter(predicate).first != nil
+    }
+
+    /// Downloads every source whose data is missing or older than a day.
+    /// `force` reloads all of them regardless of their age.
+    func refreshAll(force: Bool = false) {
+        guard !NetworkManager.isRefreshing else { return }
+
+        let pending = ItemType.allDownloadable.filter { force || isOutdated($0) || !hasStoredItems($0) }
+        guard !pending.isEmpty else { return }
+
+        NetworkManager.isRefreshing = true
+        Helpers().getDataController().clearContent()
+        Helpers().showLoadingViewController()
+        setStatus(text: "Updating \(pending.count) sources...", progress: 0)
+
+        let batches = stride(from: 0, to: pending.count, by: NetworkManager.parallelDownloads).map {
+            Array(pending[$0 ..< min($0 + NetworkManager.parallelDownloads, pending.count)])
+        }
+
+        runBatches(batches, index: 0, done: 0, total: pending.count)
+    }
+
+    private func runBatches(_ batches: [[ItemType]], index: Int, done: Int, total: Int) {
+        guard index < batches.count else {
+            finishRefresh()
             return
         }
-        
-        if (url.isFileURL) {
-            guard (try? url.checkResourceIsReachable()) != nil else {
-                Helpers().makeAlert(messageText: "Resource not found!", informativeText: "File does not exist at path: \(url)", alertStyle: .warning)
-                return
-            }
-        }
 
-        let ft:FileType = self.windowDelegate.getItemType().fileType
-        let ct:ConsoleType = self.windowDelegate.getItemType().console
-        let workQueue = DispatchQueue.global(qos: .userInitiated)
+        let batch = batches[index]
+        setStatus(text: "Downloading \(batch.map { $0.label }.joined(separator: ", "))...",
+                  progress: Double(done) / Double(total) * 90)
 
-        Promise<[TSVData]> { fulfill, reject in
-            Helpers().showLoadingViewController()
-            Helpers().getLoadingViewController().setLabel(text: "Requesting data... (step 1/5)")
-            Helpers().getLoadingViewController().setProgress(amount: 10)
-
-            sharedSession.request(url)
-                .downloadProgress { progress in
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 10 + progress.fractionCompleted * 40)
-                }
-
-                .responseString(queue: workQueue) { response in
-                    switch response.result {
-                    case .success(let text):
-                        DispatchQueue.main.async {
-                            self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                            self.windowDelegate.getLoadingViewController().setProgress(amount: 60)
-                        }
-                        let parsedTSV = Parser().parseTSV(data: text, itemType: self.itemType)
-                        fulfill(parsedTSV)
-                    case .failure(let error):
-                        reject(error)
-                    }
-            }
-        }
-            .then(on: workQueue) { (_: [TSVData]) in
-                DispatchQueue.main.async {
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 75)
-                }
-
-                let storage = try RealmStorageContext()
-                try storage.deleteAll(Item.self, predicate: NSPredicate(format: "fileType == %@ AND consoleType == %@", ft.rawValue, ct.rawValue))
-        }
-            .then(on: workQueue) { (result: [TSVData]) in
-                DispatchQueue.main.async {
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 90)
-                }
-
-                let objs = result.map { item in
-                    return Item(tsvData: item)
-                }
-                DBManager().storeBulk(objArray: objs)
-        }
+        all(batch.map { self.fetchAndStore(itemType: $0) })
             .then { _ in
-                Helpers().getLoadingViewController().closeWindow()
-        }
-            .then { _ in
-                if (self.itemType.console == ConsoleType.PSV && self.itemType.fileType == FileType.Game) {
-
-                    guard let cpackurl = Defaults[.src_compatPacks] else {
-                        Helpers().makeAlert(messageText: "No URL set for Compat Packs.", informativeText: "Set source paths in the preferences window.", alertStyle: .warning)
-                        
-                        log.error("Invalid URL given for compat packs.")
-                        return
-                    }
-                    
-                    guard let cpatchurl: URL = Defaults[.src_compatPatch] else {
-                        Helpers().makeAlert(messageText: "No URL set for Compat Patches.", informativeText: "Set source paths in the preferences window.", alertStyle: .warning)
-                        
-                        log.error("Invalid URL given for compat patches")
-                        return
-                    }
-                        
-                    if (cpatchurl.isFileURL) {
-                        guard (try? cpatchurl.checkResourceIsReachable()) != nil else {
-                            Helpers().makeAlert(messageText: "Resource not found!", informativeText: "File does not exist at path: \(cpatchurl)", alertStyle: .warning)
-                            return
-                        }
-                    }
-
-                
-                    self.makeCompatPackRequestPromise(url: cpackurl, isPatch: false)
-                    .then {_ in
-                        self.makeCompatPackRequestPromise(url: cpatchurl, isPatch: true)
-                    }
-                    
-                }
-        }
-            .then {_ in
-                Helpers().getDataController().filterType(itemType: ItemType(console: ct, fileType: ft), region: self.windowDelegate.getRegion())
-        }
+                self.runBatches(batches, index: index + 1, done: done + batch.count, total: total)
+            }
             .catch { error in
                 log.error(error)
-                Helpers().getLoadingViewController().closeWindow()
+                self.finishRefresh()
                 Helpers().makeAlert(messageText: "Request failed",
                                     informativeText: error.localizedDescription,
                                     alertStyle: .warning)
+            }
+    }
+
+    private func finishRefresh() {
+        setStatus(text: "Loading compatibility packs...", progress: 90)
+
+        let compatPacks = Defaults[.src_compatPacks]
+        let compatPatch = Defaults[.src_compatPatch]
+
+        makeCompatPackRequestPromise(url: compatPacks, isPatch: false)
+            .then { _ in
+                self.makeCompatPackRequestPromise(url: compatPatch, isPatch: true)
+            }
+            .always {
+                NetworkManager.isRefreshing = false
+                Helpers().getLoadingViewController().closeWindow()
+                Helpers().getDataController().applyFilter()
+            }
+    }
+
+    private func setStatus(text: String, progress: Double) {
+        DispatchQueue.main.async {
+            self.windowDelegate.getLoadingViewController().setLabel(text: text)
+            self.windowDelegate.getLoadingViewController().setProgress(amount: progress)
         }
     }
 
-    func makeCompatPackRequestPromise(url: URL, isPatch: Bool) -> Promise<[CompatPack]?> {
-        if url.absoluteString.isEmpty {
-            return Promise(nil)
+    private func fetchAndStore(itemType: ItemType) -> Promise<Void> {
+        guard let url = Helpers().getUrlSettingsByType(itemType: itemType) else {
+            log.error("Invalid URL given for item type: \(itemType.description)")
+            return Promise(())
         }
-        
-        var typeName: String = "CompatPack"
-        if isPatch {
-            typeName = "CompatPatch"
-        }
-        let workQueue = DispatchQueue.global(qos: .userInitiated)
-        return Promise<[CompatPack]?> { fulfill, reject in
-            
-          if (self.windowDelegate.getLoadingViewController().presentingViewController != nil) {
-                Helpers().showLoadingViewController()
-            }
-            Helpers().getLoadingViewController().setLabel(text: "Requesting Comp Packs... (step 1/5)")
-            Helpers().getLoadingViewController().setProgress(amount: 10)
 
+        if url.isFileURL, (try? url.checkResourceIsReachable()) == nil {
+            log.error("File does not exist at path: \(url)")
+            return Promise(())
+        }
+
+        let workQueue = DispatchQueue.global(qos: .userInitiated)
+
+        return Promise<[TSVData]> { fulfill, reject in
             sharedSession.request(url)
-                .downloadProgress { progress in
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Receiving data... (step 2/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 10 + progress.fractionCompleted * 40)
-                }
-                .responseString(queue: workQueue) { response in
+                .responseString(queue: workQueue, encoding: .utf8) { response in
                     switch response.result {
                     case .success(let text):
-                        DispatchQueue.main.async {
-                            self.windowDelegate.getLoadingViewController().setLabel(text: "Preparing... (step 3/5)")
-                            self.windowDelegate.getLoadingViewController().setProgress(amount: 60)
-                        }
-                        let parsed = Parser().parseCompatPackEntries(data: text, isPatch: isPatch, typeName: typeName)
-                        fulfill(parsed)
+                        fulfill(Parser().parseTSV(data: text, itemType: itemType))
+                    case .failure(let error):
+                        reject(error)
+                    }
+                }
+        }
+            .then(on: workQueue) { (result: [TSVData]) -> Void in
+                let storage = try RealmStorageContext()
+                try storage.deleteAll(Item.self, predicate: NSPredicate(format: "fileType == %@ AND consoleType == %@",
+                                                                        itemType.fileType.rawValue, itemType.console.rawValue))
+
+                DBManager().storeBulk(objArray: result.map { Item(tsvData: $0) })
+
+                DispatchQueue.main.async {
+                    Defaults[NetworkManager.lastRefreshKey(itemType)] = Date()
+                }
+            }
+    }
+
+    func makeCompatPackRequestPromise(url: URL?, isPatch: Bool) -> Promise<Void> {
+        guard let url = url, !url.absoluteString.isEmpty else {
+            return Promise(())
+        }
+
+        let typeName = isPatch ? "CompatPatch" : "CompatPack"
+        let workQueue = DispatchQueue.global(qos: .userInitiated)
+
+        return Promise<[CompatPack]> { fulfill, reject in
+            sharedSession.request(url)
+                .responseString(queue: workQueue, encoding: .utf8) { response in
+                    switch response.result {
+                    case .success(let text):
+                        fulfill(Parser().parseCompatPackEntries(data: text, isPatch: isPatch, typeName: typeName))
                     case .failure(let error):
                         reject(error)
                     }
                 }
             }
-            .then(on: workQueue) { (_: [CompatPack]?) in
-                DispatchQueue.main.async {
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Removing old values... (step 4/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 75)
-                }
-
+            .then(on: workQueue) { (result: [CompatPack]) -> Void in
                 let storage = try RealmStorageContext()
                 try storage.deleteAll(CompatPack.self, predicate: NSPredicate(format: "type == %@", typeName))
+
+                DBManager().storeBulk(objArray: result)
             }
-            .then(on: workQueue) { (result: [CompatPack]?) in
-                DispatchQueue.main.async {
-                    self.windowDelegate.getLoadingViewController().setLabel(text: "Storing new values... (step 5/5)")
-                    self.windowDelegate.getLoadingViewController().setProgress(amount: 90)
-                }
-                if let result = result {
-                    DBManager().storeBulk(objArray: result)
-                }
-            }
-            .then { _ in
-                Helpers().getLoadingViewController().closeWindow()
-        }
-            .catch { error in
+            .recover { error -> Void in
                 log.error(error)
-                Helpers().getLoadingViewController().closeWindow()
-                Helpers().makeAlert(messageText: "Compat pack request failed",
-                                    informativeText: error.localizedDescription,
-                                    alertStyle: .warning)
-        }
+            }
     }
 
 }

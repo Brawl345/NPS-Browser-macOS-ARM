@@ -557,18 +557,20 @@
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="7eI-JH-Pcd"/>
-                                <toolbarItem implicitItemIdentifier="5E33CBC5-AE94-4FAE-88FD-B3D88483FDD9" label="Region" paletteLabel="Region" title="US" sizingBehavior="auto" id="ITM-y0-txp">
+                                <toolbarItem implicitItemIdentifier="5E33CBC5-AE94-4FAE-88FD-B3D88483FDD9" label="Region" paletteLabel="Region" title="ANY" sizingBehavior="auto" id="ITM-y0-txp">
                                     <nil key="toolTip"/>
                                     <popUpButton key="view" verticalHuggingPriority="750" id="5DJ-Vn-CX3">
                                         <rect key="frame" x="0.0" y="14" width="55" height="28"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="US" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="uqp-4b-8ti" id="EWl-YE-q7s">
+                                        <popUpButtonCell key="cell" type="roundTextured" title="ANY" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="Qz1-4r-any" id="EWl-YE-q7s">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="e3y-6b-Lld">
                                                 <items>
-                                                    <menuItem title="US" state="on" id="uqp-4b-8ti"/>
+                                                    <menuItem title="ANY" tag="4" state="on" id="Qz1-4r-any" userLabel="Any Region"/>
+                                                    <menuItem isSeparatorItem="YES" id="Qz1-4r-sep"/>
                                                     <menuItem title="EU" tag="1" id="jAb-Oc-quw"/>
+                                                    <menuItem title="US" id="uqp-4b-8ti"/>
                                                     <menuItem title="JP" tag="2" id="gn1-hs-gbI"/>
                                                     <menuItem title="ASIA" tag="3" id="x3f-XS-6er"/>
                                                 </items>
@@ -589,10 +591,14 @@
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="6tu-gm-MsT">
                                                 <items>
+                                                    <menuItem title="ANY" tag="8" id="Any-a1-A00" userLabel="Any Type"/>
+                                                    <menuItem isSeparatorItem="YES" id="Any-a1-A01"/>
+                                                    <menuItem title="PSV ANY" tag="8" id="Any-a1-A02" userLabel="PSV Any"/>
                                                     <menuItem title="PSV Games" state="on" id="6SS-c2-qNo"/>
                                                     <menuItem title="PSV DLCs" tag="1" id="6ed-Cl-q8z"/>
                                                     <menuItem title="PSV Themes" tag="2" id="0LQ-To-8h6"/>
                                                     <menuItem isSeparatorItem="YES" id="ubb-BX-Rh1"/>
+                                                    <menuItem title="PS3 ANY" tag="8" id="Any-a1-A03" userLabel="PS3 Any"/>
                                                     <menuItem title="PS3 Games" id="brt-cy-6FW"/>
                                                     <menuItem title="PS3 DLCs" tag="1" id="tMY-5i-zVw" userLabel="PS3 DLCs"/>
                                                     <menuItem title="PS3 Themes" tag="2" id="bKD-hT-cBr" userLabel="PS3 Themes"/>
@@ -855,6 +861,45 @@
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="textField" destination="faZ-TA-L4X" id="PVA-yj-505"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                    </prototypeCellViews>
+                                                </tableColumn>
+                                                <tableColumn editable="NO" hidden="YES" width="80" minWidth="10" maxWidth="3.4028234663852886e+38" identifier="TypeColumn" id="Typ-c1-A01">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Type">
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="Typ-c1-A02">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="typeLabel"/>
+                                                    <prototypeCellViews>
+                                                        <tableCellView id="Typ-c1-A03">
+                                                            <rect key="frame" x="153" y="1" width="80" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Typ-c1-A04">
+                                                                    <rect key="frame" x="0.0" y="1" width="80" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Typ-c1-A05">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        <connections>
+                                                                            <binding destination="Typ-c1-A03" name="value" keyPath="objectValue.typeLabel" id="Typ-c1-A06"/>
+                                                                        </connections>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="Typ-c1-A04" firstAttribute="centerX" secondItem="Typ-c1-A03" secondAttribute="centerX" id="Typ-c1-A07"/>
+                                                                <constraint firstItem="Typ-c1-A04" firstAttribute="centerY" secondItem="Typ-c1-A03" secondAttribute="centerY" id="Typ-c1-A08"/>
+                                                                <constraint firstItem="Typ-c1-A04" firstAttribute="leading" secondItem="Typ-c1-A03" secondAttribute="leading" constant="2" id="Typ-c1-A09"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="Typ-c1-A04" id="Typ-c1-A10"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>

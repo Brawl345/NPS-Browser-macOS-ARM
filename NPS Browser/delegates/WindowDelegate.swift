@@ -10,7 +10,10 @@ protocol WindowDelegate {
     func getRegion() -> String
     
     func getItemType() -> ItemType
-    
+
+    func getSearchString() -> String
+
+
     func getDataController() -> DataViewController
     func getLoadingViewController() -> LoadingViewController
 }

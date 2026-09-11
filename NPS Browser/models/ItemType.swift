@@ -10,10 +10,12 @@ import Foundation
 
 enum ConsoleType: String {
     case PSV, PS3, PSX, PSP
+    case All = "ANY"
 }
 
 enum FileType: String {
     case Game, Update, DLC, Theme, Avatar, CPack, CPatch, RAP
+    case All = "ANY"
 }
 
 struct ItemType: CustomStringConvertible {
@@ -26,6 +28,22 @@ struct ItemType: CustomStringConvertible {
         self.console = console
         self.fileType = fileType
     }
+    static let allDownloadable: [ItemType] = [
+        ItemType(console: .PSV, fileType: .Game),
+        ItemType(console: .PSV, fileType: .DLC),
+        ItemType(console: .PSV, fileType: .Theme),
+        ItemType(console: .PS3, fileType: .Game),
+        ItemType(console: .PS3, fileType: .DLC),
+        ItemType(console: .PS3, fileType: .Theme),
+        ItemType(console: .PS3, fileType: .Avatar),
+        ItemType(console: .PSP, fileType: .Game),
+        ItemType(console: .PSX, fileType: .Game)
+    ]
+
+    var label: String {
+        return "\(console.rawValue) \(fileType.rawValue)"
+    }
+
     static func getTypeFromTag(_ tag: Int) -> FileType {
         switch (tag) {
         case 0:
@@ -44,6 +62,8 @@ struct ItemType: CustomStringConvertible {
             return FileType.CPatch
         case 7:
             return FileType.RAP
+        case 8:
+            return FileType.All
         default:
             return FileType.Game
         }

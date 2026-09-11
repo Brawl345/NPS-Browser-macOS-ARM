@@ -84,6 +84,7 @@ struct TSVData {
             originalName              = col(6)
             fileSize                  = Int64(col(7) ?? "")
             sha256                    = col(8)
+        case .All: break
         }
     }
 

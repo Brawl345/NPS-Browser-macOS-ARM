@@ -865,6 +865,42 @@
         }
       }
     },
+    "Any-a1-A00.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"ANY\"; ObjectID = \"Any-a1-A00\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANY"
+          }
+        }
+      }
+    },
+    "Any-a1-A02.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"PSV ANY\"; ObjectID = \"Any-a1-A02\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PSV ANY"
+          }
+        }
+      }
+    },
+    "Any-a1-A03.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"PS3 ANY\"; ObjectID = \"Any-a1-A03\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PS3 ANY"
+          }
+        }
+      }
+    },
     "aUF-d1-5bR.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Window\"; ObjectID = \"aUF-d1-5bR\";",
       "extractionState" : "extracted_with_value",
@@ -3456,6 +3492,18 @@
         }
       }
     },
+    "Qz1-4r-any.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"ANY\"; ObjectID = \"Qz1-4r-any\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANY"
+          }
+        }
+      }
+    },
     "R4o-n2-Eq4.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"R4o-n2-Eq4\";",
       "extractionState" : "extracted_with_value",
@@ -3973,6 +4021,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "数据检测"
+          }
+        }
+      }
+    },
+    "Typ-c1-A01.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Type\"; ObjectID = \"Typ-c1-A01\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Type"
           }
         }
       }

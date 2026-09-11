@@ -19,7 +19,9 @@ This fork fixes a lot of issues and bugs like the download & bookmarks panels an
 
 ## Usage
 * Change or set URLs and extraction preferences in the Preferences window
-* From the menu select Database > Reload or press ⌘R
+* All sources are downloaded on start when their data is missing or older than a day
+* From the menu select Database > Reload or press ⌘R to download every source again
+* The region and type menus both have an "ANY" entry; with "ANY" the list gets a "Type" column
 * Compatibility pack URLs must be the raw text file.
 
 ## Removal

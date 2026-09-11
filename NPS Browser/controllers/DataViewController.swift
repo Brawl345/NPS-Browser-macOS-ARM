@@ -17,25 +17,20 @@ class DataViewController: NSViewController, ToolbarDelegate {
     lazy var windowDelegate: WindowDelegate = Helpers().getWindowDelegate()
 
     var notificationToken: NotificationToken?
-    private var requestedTypes: Set<String> = []
-    
+    private var didStartInitialRefresh = false
+
     private var realm: Realm = {
         return DBMigration.configureMigration()
     }()
-    
-    var items: Results<Item>? = try! Realm().objects(Item.self)
-    
-    override func viewDidAppear() {
-        let it = windowDelegate.getItemType()
-        let ct = it.console.rawValue
-        let ft = it.fileType.rawValue
-        let reg = windowDelegate.getRegion()
 
-        if (items?.isEmpty)! {
-            requestedTypes.insert("\(ct)_\(ft)")
-            NetworkManager().makeRequest()
-        } else {
-            setArrayControllerContent(content: items?.filter(NSPredicate(format: makePredicateString(), ct, ft, reg)))
+    var items: Results<Item>? = try! Realm().objects(Item.self)
+
+    override func viewDidAppear() {
+        applyFilter()
+
+        if !didStartInitialRefresh {
+            didStartInitialRefresh = true
+            NetworkManager().refreshAll()
         }
     }
 
@@ -51,47 +46,67 @@ class DataViewController: NSViewController, ToolbarDelegate {
         }
     }
     
-    func makePredicateString() -> String {
-        var str = "consoleType == %@ AND fileType == %@ AND region == %@ "
-        let it = windowDelegate.getItemType()
-        
+    func makePredicate(itemType: ItemType, region: String) -> NSPredicate {
+        var clauses: [String] = []
+        var args: [Any] = []
+
+        if itemType.console != .All {
+            clauses.append("consoleType == %@")
+            args.append(itemType.console.rawValue)
+        }
+        if itemType.fileType != .All {
+            clauses.append("fileType == %@")
+            args.append(itemType.fileType.rawValue)
+        }
+        if region != ConsoleType.All.rawValue {
+            clauses.append("region == %@")
+            args.append(region)
+        }
+
         if Defaults[.dsp_hide_invalid_url_items] {
-            str.append(" AND pkgDirectLink BEGINSWITH 'http'")
-            
-            switch( it.console ) {
-            case .PSV:
-                str.append(" AND zrif != 'MISSING'")
-            default: break
-            }
+            clauses.append("pkgDirectLink BEGINSWITH 'http'")
+            clauses.append("(consoleType != 'PSV' OR zrif != 'MISSING')")
         }
-        return str
-    }
-    
-    func filterType(itemType: ItemType, region: String) {
-        let p = NSPredicate(format: makePredicateString(), itemType.console.rawValue, itemType.fileType.rawValue, region)
-        let objects = items!.filter(p)
-        let typeKey = "\(itemType.console.rawValue)_\(itemType.fileType.rawValue)"
 
-        if objects.isEmpty && !requestedTypes.contains(typeKey) {
-            requestedTypes.insert(typeKey)
-            NetworkManager().makeRequest()
+        if clauses.isEmpty {
+            return NSPredicate(value: true)
         }
+        return NSPredicate(format: clauses.joined(separator: " AND "), argumentArray: args)
+    }
+
+    func applyFilter() {
+        let itemType = windowDelegate.getItemType()
+        let region = windowDelegate.getRegion()
+        let searchString = windowDelegate.getSearchString()
+
+        let matches = items!.filter(makePredicate(itemType: itemType, region: region))
+        let objects = searchString.isEmpty ? matches : matches.filter("name contains[c] %@", searchString)
+
+        showTypeColumn(itemType.console == .All || itemType.fileType == .All)
         setArrayControllerContent(content: objects)
     }
-    
-    func filterString(itemType: ItemType, region: String, searchString: String) {
-        var p = makePredicateString()
-        p.append(" AND name contains[c] %@")
-        let q = NSPredicate(format: p, itemType.console.rawValue, itemType.fileType.rawValue, region, searchString)
 
-        let objects = items!.filter(q)
-        setArrayControllerContent(content: objects)
+    private func showTypeColumn(_ visible: Bool) {
+        let column = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier("TypeColumn"))
+        column?.isHidden = !visible
     }
-    
+
     func setArrayControllerContent(content: Results<Item>?) {
-        tsvResultsController.content = Array(content!)
-        tsvResultsController.setSelectionIndex(0)
-        tableSelectionChanged(tableView)
+        let objects = content.map { Array($0) } ?? []
+        tsvResultsController.content = objects
+
+        if objects.isEmpty {
+            representedObject = nil
+        } else {
+            tsvResultsController.setSelectionIndex(0)
+            tableSelectionChanged(tableView)
+        }
+    }
+
+    /// Drops every row so no view keeps a reference to an object that a
+    /// running refresh is about to delete from the database.
+    func clearContent() {
+        setArrayControllerContent(content: nil)
     }
     
     func getDetailsViewController() -> DetailsViewController {

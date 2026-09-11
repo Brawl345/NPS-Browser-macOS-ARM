@@ -21,11 +21,20 @@ class DetailsViewController: NSViewController {
 
     override var representedObject: Any? {
         didSet {
+            guard let item = representedObject as? Item, !item.isInvalidated else {
+                btnDownload.isEnabled = false
+                chkBookmark.isEnabled = false
+                chkDLUpdate.isHidden = true
+                chkDLCompatPack.isHidden = true
+                getBoxartViewController().representedObject = nil
+                return
+            }
+
             enableBookmarkButton()
             toggleBookmark()
             enableDownloadOptions()
-            
-            getBoxartViewController().representedObject = representedObject
+
+            getBoxartViewController().representedObject = item
         }
     }
 
